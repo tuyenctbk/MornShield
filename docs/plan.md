@@ -29,7 +29,7 @@ This document outlines the development phases, release plan, and roadmap for **M
 ## Phase 3: Premium Features & Expansion (Current Roadmap)
 * **Objective**: Implement multi-sound mixing, Health Connect integration, and adaptive difficulty.
 * **Deliverables**:
-  1. Build a **Binshieldl Beats Mixer** (Alpha/Theta layers) in the audio engine to aid transition to focus.
+  1. Build a **Binaural Beats Mixer** (Alpha/Theta layers) in the audio engine to aid transition to focus.
   2. Integrate **Android Health Connect** to correlate morning ritual completion with long-term sleep health.
   3. Implement **Adaptive Puzzle Difficulty** via Firebase Remote Config based on user solve times.
   4. Enable encrypted local backups for user data privacy.

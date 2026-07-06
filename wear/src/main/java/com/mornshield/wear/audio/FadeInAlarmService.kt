@@ -73,7 +73,9 @@ class FadeInAlarmService : Service() {
     private fun startAcousticMixer() {
         Log.d("FadeInAlarmService", "MornShield Mixer started with three layers")
         // Logic to load raw resources and perform fade-in
-        // playerLayer1 = MediaPlayer.create(this, R.raw.layer_birds) ...
+        // playerLayer1 = MediaPlayer.create(this, R.raw.ambient_layer)
+        // playerLayer2 = MediaPlayer.create(this, R.raw.melodic_layer)
+        // playerLayer3 = MediaPlayer.create(this, R.raw.binaural_layer)
     }
 
     override fun onDestroy() {

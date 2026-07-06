@@ -15,7 +15,7 @@ This document hosts the official store description and release notes for **MornS
   KEY FEATURES:
 
   1. Smart REM Alarms: Tracks sleep segments to wake you up in light sleep stages.
-  2. Binshieldl Acoustic Engine: Layered soundscapes (Rain, Wind, Piano) with Alpha/Theta frequencies.
+  2. Binaural Acoustic Engine: Layered soundscapes (Rain, Wind, Piano) with Alpha/Theta frequencies.
   3. Systemic Shield: Activates system DND and suppresses distracting app notifications in-memory.
   4. Mindful Unlocking: A quick Wordle puzzle to wake your brain before accessing the digital world.
   5. AI Morning Brief: Real-time weather, meetings, and task summaries spoken naturally.

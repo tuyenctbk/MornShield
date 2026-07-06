@@ -11,11 +11,11 @@ MornShield uses a tiered discovery and synchronization architecture:
 
 ---
 
-## 2. Binshieldl Soundscape Mixer
+## 2. Binaural Soundscape Mixer
 The `:wear` module manages a triple-layer `MediaPlayer` stack:
 * **Base**: Environmental textures (Rain, Forest).
 * **Atmosphere**: Melodic sequences (Piano, Pads).
-* **Brain-Wave**: Binshieldl beats (Targeting 8-12Hz Alpha for focused waking).
+* **Brain-Wave**: Binaural beats (Targeting 8-12Hz Alpha for focused waking).
 
 ---
 
