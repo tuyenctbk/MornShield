@@ -1,0 +1,108 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- The "Rise" - Multi-layered glowing sun -->
+    <path
+        android:pathData="M 54,68 m -32,0 a 32,32 0 1,1 64,0 a 32,32 0 1,1 -64,0"
+        android:fillAlpha="0.4">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="54"
+                android:centerY="68"
+                android:gradientRadius="32"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#FFFF8C00" />
+                <item android:offset="1.0" android:color="#00FF8C00" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M 54,68 m -20,0 a 20,20 0 1,1 40,0 a 20,20 0 1,1 -40,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="54"
+                android:centerY="68"
+                android:gradientRadius="20"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#FFFFD700" />
+                <item android:offset="0.8" android:color="#FFFF8C00" />
+                <item android:offset="1.0" android:color="#00FF8C00" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Sun Rays -->
+    <path android:pathData="M54,42v-6 M54,94v-6 M31,68h-6 M77,68h-6 M38,47l-4,-4 M70,89l-4,-4 M38,89l-4,4 M70,47l-4,4"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeColor="#40FFD700"/>
+
+    <!-- Shield Group -->
+    <group
+        android:translateX="30"
+        android:translateY="24"
+        android:scaleX="2.0"
+        android:scaleY="2.0">
+
+        <!-- Shield Drop Shadow (Simulated) -->
+        <path
+            android:fillColor="#40000000"
+            android:pathData="M12.5,2.5L4.5,6.5v6c0,5.55 3.84,10.74 9,12c5.16,-1.26 9,-6.45 9,-12V6.5l-8.5,-4z"/>
+
+        <!-- Crystalline Shield Body -->
+        <path
+            android:pathData="M12,2L4,6v6c0,5.55 3.84,10.74 9,12c5.16,-1.26 9,-6.45 9,-12V6l-8,-4z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="12"
+                    android:startY="2"
+                    android:endX="12"
+                    android:endY="24"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FF8A70FF" />
+                    <item android:offset="0.5" android:color="#FF7A60FF" />
+                    <item android:offset="1.0" android:color="#FF4030A0" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Glass Highlight Edge -->
+        <path
+            android:pathData="M12,2.5L4.5,6.3v5.7c0,1 0.1,2 0.3,3"
+            android:strokeWidth="0.5"
+            android:strokeColor="#B0FFFFFF"
+            android:strokeLineCap="round"/>
+
+        <!-- Shield Core -->
+        <path
+            android:pathData="M12,12m-3.5,0a3.5,3.5 0 1,1 7,0a3.5,3.5 0 1,1 -7,0">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:centerX="12"
+                    android:centerY="12"
+                    android:gradientRadius="4"
+                    android:type="radial">
+                    <item android:offset="0.0" android:color="#FFFFFF" />
+                    <item android:offset="1.0" android:color="#60C0B3FF" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Inner Spark -->
+        <path
+            android:pathData="M12,10.5l0.5,1.5l1.5,0.5l-1.5,0.5l-0.5,1.5l-0.5,-1.5l-1.5,-0.5l1.5,-0.5z"
+            android:fillColor="#FFFFFF"/>
+    </group>
+
+    <!-- Global Gloss -->
+    <path
+        android:pathData="M 35,35 Q 54,20 73,35"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#30FFFFFF"/>
+
+</vector>
