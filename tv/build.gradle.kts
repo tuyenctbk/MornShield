@@ -20,7 +20,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.mornshield.app"
+        applicationId = "com.mornshield.apps"
         minSdk = 24 // Matches :core requirements
         targetSdk = 37
         versionCode = 1
