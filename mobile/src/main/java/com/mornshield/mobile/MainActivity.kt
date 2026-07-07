@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Build
+import android.util.Log
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -179,6 +180,9 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             ) { screen ->
+                LaunchedEffect(screen) {
+                    logScreen(screen.name)
+                }
                 when (screen) {
                     AppScreen.ONBOARDING -> {
                         OnboardingScreen(
@@ -232,6 +236,7 @@ class MainActivity : ComponentActivity() {
                             onAddTask = { text ->
                                 lifecycleScope.launch {
                                     taskDao.insertTask(TaskEntity(title = text, dateString = todayDate))
+                                    logEvent("task_added", null)
                                 }
                             },
                             onToggleTask = { task ->
@@ -246,11 +251,13 @@ class MainActivity : ComponentActivity() {
                                         put("dateString", updatedTask.dateString)
                                     }
                                     nsdSyncClient.sendSyncEvent("TASK_UPDATED", data)
+                                    logEvent("task_toggled", Bundle().apply { putBoolean("completed", nextState) })
                                 }
                             },
                             onDeleteTask = { task ->
                                 lifecycleScope.launch {
                                     taskDao.deleteTask(task)
+                                    logEvent("task_deleted", null)
                                 }
                             },
                             onNavigateToSettings = { currentScreen = AppScreen.SETTINGS }
@@ -259,6 +266,9 @@ class MainActivity : ComponentActivity() {
                     AppScreen.PUZZLE -> {
                         PuzzleScreen(
                             onPuzzleSolved = { solveDuration ->
+                                if (solveDuration == 0L) {
+                                    logEvent("emergency_bypass_triggered", null)
+                                }
                                 MornShieldNotificationListenerService.setShieldActive(this@MainActivity, false)
                                 RatingHelper.recordRitualCompletion(this@MainActivity)
                                 HealthHelper.syncRitualWithHealthConnect(this@MainActivity, "Morning Wordle")
@@ -296,6 +306,11 @@ class MainActivity : ComponentActivity() {
                                     .putInt("alarm_minute", m)
                                     .putInt("alarm_window", w)
                                     .apply()
+                                logEvent("alarm_settings_saved", Bundle().apply {
+                                    putInt("hour", h)
+                                    putInt("minute", m)
+                                    putInt("window", w)
+                                })
                                 Toast.makeText(this@MainActivity, getString(R.string.alarm_saved), Toast.LENGTH_SHORT).show()
                             },
                             onTogglePremium = {
@@ -318,6 +333,15 @@ class MainActivity : ComponentActivity() {
         try {
             firebaseAnalytics.logEvent(name, bundle)
         } catch (e: Exception) {}
+    }
+
+    private fun logScreen(screenName: String) {
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            putString(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
+        }
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+        Log.d("MornShieldAnalytics", "Screen View: $screenName")
     }
 
     private fun isNotificationListenerEnabled(): Boolean {

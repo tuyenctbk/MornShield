@@ -33,18 +33,57 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.firebase.analytics.FirebaseAnalytics
 
 object AdsHelper {
 
     private var mInterstitialAd: InterstitialAd? = null
     private var isListeningToLoad = false
+    private var appStartTime = System.currentTimeMillis()
+    private var firebaseAnalytics: FirebaseAnalytics? = null
 
     fun initialize(context: Context) {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(context)
         try {
             MobileAds.initialize(context) {
                 loadInterstitial(context.applicationContext)
             }
+            incrementOpenCount(context)
         } catch (e: Exception) {}
+    }
+
+    private fun incrementOpenCount(context: Context) {
+        val prefs = context.getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+        val count = prefs.getInt("app_open_count", 0)
+        val firstOpen = prefs.getLong("first_open_time", 0L)
+        
+        with(prefs.edit()) {
+            putInt("app_open_count", count + 1)
+            if (firstOpen == 0L) {
+                putLong("first_open_time", System.currentTimeMillis())
+            }
+            apply()
+        }
+    }
+
+    fun canShowAds(context: Context, isPremium: Boolean): Boolean {
+        if (isPremium) return false
+        
+        val prefs = context.getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+        val openCount = prefs.getInt("app_open_count", 0)
+        val firstOpenTime = prefs.getLong("first_open_time", System.currentTimeMillis())
+        
+        // Logic driven by Remote Config:
+        val minDays = RemoteConfigHelper.getAdsMinDays()
+        val minOpens = RemoteConfigHelper.getAdsMinOpens()
+        val minSessionSeconds = RemoteConfigHelper.getAdsMinSessionSeconds()
+        
+        val minDaysMs = minDays * 24 * 60 * 60 * 1000
+        val isOldEnough = System.currentTimeMillis() - firstOpenTime > minDaysMs
+        val hasOpenedEnough = openCount >= minOpens
+        val isSessionLongEnough = System.currentTimeMillis() - appStartTime > (minSessionSeconds * 1000)
+        
+        return hasOpenedEnough && isOldEnough && isSessionLongEnough
     }
 
     fun loadInterstitial(context: Context) {
@@ -71,20 +110,26 @@ object AdsHelper {
     }
 
     fun showInterstitial(context: Context, isPremium: Boolean) {
-        if (isPremium) return
+        if (!canShowAds(context, isPremium)) return
         val activity = findActivity(context) ?: return
         
         val ad = mInterstitialAd
         if (ad != null) {
             ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdShowedFullScreenContent() {
+                    firebaseAnalytics?.logEvent("ad_interstitial_shown", null)
+                }
+
                 override fun onAdDismissedFullScreenContent() {
                     mInterstitialAd = null
                     loadInterstitial(context.applicationContext)
+                    firebaseAnalytics?.logEvent("ad_interstitial_dismissed", null)
                 }
 
                 override fun onAdFailedToShowFullScreenContent(error: AdError) {
                     mInterstitialAd = null
                     loadInterstitial(context.applicationContext)
+                    firebaseAnalytics?.logEvent("ad_interstitial_failed_to_show", null)
                 }
             }
             ad.show(activity)
@@ -104,14 +149,14 @@ object AdsHelper {
 
     @Composable
     fun BannerAd(modifier: Modifier = Modifier, isPremium: Boolean = false) {
-        if (isPremium) return
+        val context = LocalContext.current
+        if (!canShowAds(context, isPremium)) return
 
         if (LocalInspectionMode.current) {
             BannerAdPlaceholder(modifier)
             return
         }
 
-        val context = LocalContext.current
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp
 
@@ -150,14 +195,14 @@ object AdsHelper {
 
     @Composable
     fun NativeAd(modifier: Modifier = Modifier, isPremium: Boolean = false) {
-        if (isPremium) return
+        val context = LocalContext.current
+        if (!canShowAds(context, isPremium)) return
 
         if (LocalInspectionMode.current) {
             NativeAdPlaceholder(modifier)
             return
         }
 
-        val context = LocalContext.current
         var nativeAdState by remember { mutableStateOf<NativeAd?>(null) }
         var loadFailed by remember { mutableStateOf(false) }
 
