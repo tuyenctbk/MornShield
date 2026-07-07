@@ -20,4 +20,5 @@ This document hosts the official store description and release notes for **MornS
   4. Mindful Unlocking: A quick Wordle puzzle to wake your brain before accessing the digital world.
   5. AI Morning Brief: Real-time weather, meetings, and task summaries spoken naturally.
   6. Health Integration: Syncs rituals with Android Health Connect for deep sleep analytics.
+  7. Zen Monetization: Intelligent ad-delay logic (min 3 days, 10 opens, and session delay) to respect your morning peace.
   ```

@@ -39,3 +39,11 @@ The `:wear` audio engine now implements a 60-second gradual fade-in:
 *   **Layer 2 (Melodic)**: Starts at 18s, ramps to 60% volume.
 *   **Layer 3 (Binaural)**: Starts at 36s, ramps to 50% volume.
 *   **Transition**: Linear interpolation over 100 steps to prevent audio popping.
+
+---
+
+## 7. Zen Monetization & Remote Config
+MornShield uses an intelligent ad-filtering logic to ensure the "Zen" user experience:
+1.  **Thresholds**: Ads are only shown if the app is ≥ 3 days old, has been opened ≥ 10 times, and the current session is ≥ 15 seconds long.
+2.  **Remote Config**: These values are synced from Firebase Remote Config, allowing real-time adjustment of monetization aggressiveness.
+3.  **Local State**: App open counts and install timestamps are stored securely in `SharedPreferences`.
