@@ -10,6 +10,7 @@ import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import java.io.OutputStreamWriter
 import java.net.Socket
+import org.json.JSONObject
 
 class NsdSyncClient(context: Context) {
 
@@ -108,10 +109,9 @@ class NsdSyncClient(context: Context) {
     }
 
     /**
-     * Sends a synchronization event to the resolved Android TV TCP Socket Server.
-     * Implements a simple retry mechanism.
+     * Sends a synchronization event with optional data to the resolved Android TV TCP Socket Server.
      */
-    fun sendSyncEvent(event: String, retryCount: Int = 0) {
+    fun sendSyncEvent(event: String, data: JSONObject? = null, retryCount: Int = 0) {
         val serviceInfo = resolvedServiceInfo
         if (serviceInfo == null) {
             Log.w("NsdSyncClient", "Cannot send event: TV service not resolved. Starting discovery...")
@@ -122,23 +122,25 @@ class NsdSyncClient(context: Context) {
         scope.launch {
             var socket: Socket? = null
             try {
-                // Connect socket with 3-second timeout
                 socket = Socket(serviceInfo.host, serviceInfo.port).apply {
                     soTimeout = 3000
                 }
                 
                 val writer = OutputStreamWriter(socket.getOutputStream(), "UTF-8")
-                val jsonPayload = "{\"event\": \"$event\", \"timestamp\": ${System.currentTimeMillis()}}\n"
+                val payload = JSONObject().apply {
+                    put("event", event)
+                    put("timestamp", System.currentTimeMillis())
+                    data?.let { put("data", it) }
+                }
                 
-                writer.write(jsonPayload)
+                writer.write(payload.toString() + "\n")
                 writer.flush()
                 Log.d("NsdSyncClient", "Successfully synced event $event to TV")
             } catch (e: Exception) {
                 Log.e("NsdSyncClient", "Socket sync exception: ${e.message}")
                 if (retryCount < 2) {
-                    Log.d("NsdSyncClient", "Retrying sync event $event (attempt ${retryCount + 1})")
                     kotlinx.coroutines.delay(2000)
-                    sendSyncEvent(event, retryCount + 1)
+                    sendSyncEvent(event, data, retryCount + 1)
                 }
             } finally {
                 try {

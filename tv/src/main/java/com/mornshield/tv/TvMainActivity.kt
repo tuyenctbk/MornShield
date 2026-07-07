@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.*
+import androidx.lifecycle.lifecycleScope
 import com.mornshield.core.data.MornShieldDatabase
 import com.mornshield.core.data.TaskEntity
 import com.mornshield.tv.R
@@ -50,8 +51,28 @@ class TvMainActivity : ComponentActivity() {
         }
 
         // Start local network sync server
-        syncServer = NsdSyncServer(this) { event ->
-            // Handle events from mobile/wear (e.g., Task toggled)
+        syncServer = NsdSyncServer(this) { json ->
+            val event = json.optString("event")
+            val data = json.optJSONObject("data")
+            
+            if (event == "TASK_UPDATED" && data != null) {
+                val title = data.optString("title")
+                val isCompleted = data.optBoolean("isCompleted")
+                val dateString = data.optString("dateString")
+                
+                lifecycleScope.launch {
+                    val taskDao = database.taskDao()
+                    val existingTasks = taskDao.getTasksForDateList(dateString)
+                    val task = existingTasks.find { it.title == title }
+                    if (task != null) {
+                        taskDao.updateTask(task.copy(isCompleted = isCompleted))
+                    } else {
+                        taskDao.insertTask(TaskEntity(title = title, isCompleted = isCompleted, dateString = dateString))
+                    }
+                }
+            } else if (event == "REM_DETECTED") {
+                // TV could react to REM detection (e.g., wake up screen)
+            }
         }
         syncServer.start()
     }

@@ -173,20 +173,38 @@ fun OnboardingScreen(
 
                     if (page == 2) {
                         Spacer(modifier = Modifier.height(24.dp))
-                        Button(
-                            onClick = {
-                                try {
-                                    context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    })
-                                } catch (e: Exception) {
-                                    context.startActivity(Intent(Settings.ACTION_SETTINGS))
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7A60FF)),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(stringResource(id = R.string.grant_listener), color = Color.White)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = {
+                                    try {
+                                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        })
+                                    } catch (e: Exception) {
+                                        context.startActivity(Intent(Settings.ACTION_SETTINGS))
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7A60FF)),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(stringResource(id = R.string.grant_listener), color = Color.White)
+                            }
+
+                            Button(
+                                onClick = {
+                                    try {
+                                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        })
+                                    } catch (e: Exception) {
+                                        context.startActivity(Intent(Settings.ACTION_SETTINGS))
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7A60FF)),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(stringResource(id = R.string.grant_dnd_access), color = Color.White)
+                            }
                         }
                     }
 

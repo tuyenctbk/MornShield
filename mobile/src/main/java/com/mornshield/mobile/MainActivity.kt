@@ -209,8 +209,13 @@ class MainActivity : ComponentActivity() {
                                 if (isShieldActive) {
                                     currentScreen = AppScreen.PUZZLE
                                 } else {
-                                    MornShieldNotificationListenerService.setShieldActive(this@MainActivity, true)
-                                    logEvent("notification_shield_toggled", Bundle().apply { putBoolean("active", true) })
+                                    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+                                    if (!isNotificationListenerEnabled() || !notificationManager.isNotificationPolicyAccessGranted) {
+                                        requestSpecialPermissions()
+                                    } else {
+                                        MornShieldNotificationListenerService.setShieldActive(this@MainActivity, true)
+                                        logEvent("notification_shield_toggled", Bundle().apply { putBoolean("active", true) })
+                                    }
                                 }
                             },
                             onAddTask = { text ->
@@ -221,8 +226,15 @@ class MainActivity : ComponentActivity() {
                             onToggleTask = { task ->
                                 lifecycleScope.launch {
                                     val nextState = !task.isCompleted
-                                    taskDao.updateTask(task.copy(isCompleted = nextState))
-                                    nsdSyncClient.sendSyncEvent("TASK_TOGGLED")
+                                    val updatedTask = task.copy(isCompleted = nextState)
+                                    taskDao.updateTask(updatedTask)
+                                    
+                                    val data = org.json.JSONObject().apply {
+                                        put("title", updatedTask.title)
+                                        put("isCompleted", updatedTask.isCompleted)
+                                        put("dateString", updatedTask.dateString)
+                                    }
+                                    nsdSyncClient.sendSyncEvent("TASK_UPDATED", data)
                                 }
                             },
                             onDeleteTask = { task ->
@@ -295,6 +307,28 @@ class MainActivity : ComponentActivity() {
         try {
             firebaseAnalytics.logEvent(name, bundle)
         } catch (e: Exception) {}
+    }
+
+    private fun isNotificationListenerEnabled(): Boolean {
+        val packageName = packageName
+        val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+        return flat?.contains(packageName) == true
+    }
+
+    private fun requestSpecialPermissions() {
+        if (!isNotificationListenerEnabled()) {
+            try {
+                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+            } catch (e: Exception) {
+                startActivity(Intent(Settings.ACTION_SETTINGS))
+            }
+            return
+        }
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        if (!notificationManager.isNotificationPolicyAccessGranted) {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
+        }
     }
 
     override fun onDestroy() {

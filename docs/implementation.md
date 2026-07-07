@@ -27,5 +27,15 @@ The notification shield now operates on two levels:
 
 ---
 
-## 4. Health Connect Provider
-The `:mobile` module implements the Health Connect client to read and write sleep-segment data, allowing the app to calculate the effectiveness of the "Gentle Wake" sequence on daily energy levels.
+## 5. Emergency Bypass & Safety
+To ensure user safety, the **Puzzle Screen** includes a hidden emergency bypass:
+*   **Trigger**: Long-press on the "BRAIN WAKEUP PUZZLE" header.
+*   **Action**: Displays a confirmation dialog to immediately disable the shield and stop all alarm services.
+*   **Logging**: All bypass events are logged locally to help users identify if they are routinely skipping their rituals.
+
+## 6. Multi-Layer Audio Engine (Wear OS)
+The `:wear` audio engine now implements a 60-second gradual fade-in:
+*   **Layer 1 (Ambient)**: Starts at 0s, ramps to 80% volume.
+*   **Layer 2 (Melodic)**: Starts at 18s, ramps to 60% volume.
+*   **Layer 3 (Binaural)**: Starts at 36s, ramps to 50% volume.
+*   **Transition**: Linear interpolation over 100 steps to prevent audio popping.

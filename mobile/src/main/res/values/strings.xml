@@ -48,6 +48,7 @@
     <string name="onboarding_subtitle_4">Enable Alarm &amp; Tracking Permissions</string>
     <string name="onboarding_desc_4">Grant activity sensors and notification permissions to allow Wear OS to track sleep segments and send alarm signals correctly.</string>
     <string name="grant_listener">Grant Listener Access</string>
+    <string name="grant_dnd_access">Grant DND Access</string>
     <string name="grant_system_perms">Grant System Permissions</string>
     <string name="permissions_granted">✓ Permissions Granted</string>
     <string name="start_tracking">Track Sleep</string>

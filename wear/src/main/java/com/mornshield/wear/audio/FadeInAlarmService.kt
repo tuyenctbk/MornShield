@@ -72,17 +72,41 @@ class FadeInAlarmService : Service() {
 
     private fun startAcousticMixer() {
         Log.d("FadeInAlarmService", "MornShield Mixer started with three layers")
-        // Logic to load raw resources and perform fade-in
-        // playerLayer1 = MediaPlayer.create(this, R.raw.ambient_layer)
-        // playerLayer2 = MediaPlayer.create(this, R.raw.melodic_layer)
-        // playerLayer3 = MediaPlayer.create(this, R.raw.binaural_layer)
+        
+        scope.launch(Dispatchers.IO) {
+            try {
+                playerLayer1 = MediaPlayer.create(this@FadeInAlarmService, R.raw.ambient_layer).apply { isLooping = true; setVolume(0f, 0f) }
+                playerLayer2 = MediaPlayer.create(this@FadeInAlarmService, R.raw.melodic_layer).apply { isLooping = true; setVolume(0f, 0f) }
+                playerLayer3 = MediaPlayer.create(this@FadeInAlarmService, R.raw.binaural_layer).apply { isLooping = true; setVolume(0f, 0f) }
+
+                playerLayer1?.start()
+                playerLayer2?.start()
+                playerLayer3?.start()
+
+                // Gradual fade-in over 60 seconds
+                for (i in 1..100) {
+                    if (!isActive) break
+                    val volume = i / 100f
+                    playerLayer1?.setVolume(volume * 0.8f, volume * 0.8f)
+                    if (i > 30) playerLayer2?.setVolume((i - 30) / 70f * 0.6f, (i - 30) / 70f * 0.6f)
+                    if (i > 60) playerLayer3?.setVolume((i - 60) / 40f * 0.5f, (i - 60) / 40f * 0.5f)
+                    delay(600) // 100 steps * 600ms = 60 seconds
+                }
+            } catch (e: Exception) {
+                Log.e("FadeInAlarmService", "Error in mixer: ${e.message}")
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        playerLayer1?.stop()
-        playerLayer2?.stop()
-        playerLayer3?.stop()
+        try {
+            playerLayer1?.stop(); playerLayer1?.release()
+            playerLayer2?.stop(); playerLayer2?.release()
+            playerLayer3?.stop(); playerLayer3?.release()
+        } catch (e: Exception) {
+            Log.e("FadeInAlarmService", "Error releasing players: ${e.message}")
+        }
         scope.cancel()
     }
 

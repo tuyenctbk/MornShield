@@ -16,7 +16,7 @@ import java.net.Socket
 
 class NsdSyncServer(
     private val context: Context,
-    private val onEventReceived: (String) -> Unit
+    private val onEventReceived: (JSONObject) -> Unit
 ) {
 
     private val nsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
@@ -93,11 +93,8 @@ class NsdSyncServer(
             if (line != null) {
                 Log.d("NsdSyncServer", "Received connection payload: $line")
                 val json = JSONObject(line)
-                val event = json.optString("event")
-                if (event.isNotEmpty()) {
-                    scope.launch(Dispatchers.Main) {
-                        onEventReceived(event)
-                    }
+                scope.launch(Dispatchers.Main) {
+                    onEventReceived(json)
                 }
             }
         } catch (e: Exception) {

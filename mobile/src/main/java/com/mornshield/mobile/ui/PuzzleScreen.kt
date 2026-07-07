@@ -3,6 +3,7 @@ package com.mornshield.mobile.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -19,12 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mornshield.mobile.R
 import com.mornshield.mobile.util.RemoteConfigHelper
-import kotlinx.coroutines.delay
 
 @Composable
 fun PuzzleScreen(onPuzzleSolved: (Long) -> Unit) {
     var solution by remember { mutableStateOf("") }
     val startTime = remember { System.currentTimeMillis() }
+    
+    // Emergency bypass state
+    var showBypassDialog by remember { mutableStateOf(false) }
     
     // Target word changes based on Remote Config difficulty
     val targetWord = remember { 
@@ -52,7 +56,16 @@ fun PuzzleScreen(onPuzzleSolved: (Long) -> Unit) {
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF7A60FF),
-                letterSpacing = 2.sp
+                letterSpacing = 2.sp,
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                showBypassDialog = true
+                            }
+                        )
+                    }
+                    .padding(8.dp)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -91,7 +104,7 @@ fun PuzzleScreen(onPuzzleSolved: (Long) -> Unit) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Virtual Keyboard (Simulated for brevity)
+            // Virtual Keyboard
             val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 alphabet.chunked(9).forEach { row ->
@@ -125,6 +138,24 @@ fun PuzzleScreen(onPuzzleSolved: (Long) -> Unit) {
             TextButton(onClick = { solution = "" }) {
                 Text(stringResource(id = R.string.reset_puzzle), color = Color(0xFFC0B3FF))
             }
+        }
+        
+        if (showBypassDialog) {
+            AlertDialog(
+                onDismissRequest = { showBypassDialog = false },
+                title = { Text("Emergency Bypass") },
+                text = { Text("Are you in an emergency and need to disable the shield immediately?") },
+                confirmButton = {
+                    Button(onClick = { onPuzzleSolved(0L) }) {
+                        Text("Yes, Disable Now")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showBypassDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }

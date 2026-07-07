@@ -122,8 +122,12 @@ class MornShieldNotificationListenerService : NotificationListenerService() {
     }
 
     private fun isDistraction(packageName: String): Boolean {
+        val prefs = getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+        val customDistractions = prefs.getStringSet("distraction_packages", emptySet()) ?: emptySet()
+        
         val lower = packageName.lowercase()
-        return lower.contains("slack") || 
+        val isCustom = customDistractions.any { lower.contains(it.lowercase()) }
+        val isDefault = lower.contains("slack") || 
                lower.contains("gmail") || 
                lower.contains("whatsapp") || 
                lower.contains("facebook") || 
@@ -134,6 +138,19 @@ class MornShieldNotificationListenerService : NotificationListenerService() {
                lower.contains("telegram") || 
                lower.contains("snapchat") ||
                lower.contains("tiktok")
+        
+        return isCustom || isDefault
+    }
+
+    override fun onDestroy() {
+        if (isShieldActive.value) {
+            try {
+                if (notificationManager.isNotificationPolicyAccessGranted) {
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+                }
+            } catch (e: Exception) {}
+        }
+        super.onDestroy()
     }
 
     companion object {
@@ -151,6 +168,13 @@ class MornShieldNotificationListenerService : NotificationListenerService() {
 
         fun clearSuppressedNotifications() {
             _suppressedQueue.value = emptyList()
+        }
+
+        fun addDistraction(context: Context, packageName: String) {
+            val prefs = context.getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+            val set = prefs.getStringSet("distraction_packages", emptySet())?.toMutableSet() ?: mutableSetOf()
+            set.add(packageName)
+            prefs.edit().putStringSet("distraction_packages", set).apply()
         }
 
         fun setShieldActive(context: Context, active: Boolean) {

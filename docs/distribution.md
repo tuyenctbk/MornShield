@@ -7,10 +7,10 @@ This document hosts the official store description and release notes for **MornS
 ## 1. Store Listing Metadata (English Default)
 
 * **App Title**: MornShield: Morning Flow & Rituals
-* **Short Description**: Gentle waking, binshieldl soundscapes, and notification shielding.
+* **Short Description**: Gentle waking, binaural soundscapes, and notification shielding.
 * **Full Description**:
   ```text
-  MornShield creates a gentle buffer space for your brain during the first 15–30 minutes of your day. It actively shields you from digital stress, wakes you up with rhythmic binshieldl beats, and helps you form a calm morning routine across your Phone, Watch, and TV.
+  MornShield creates a gentle buffer space for your brain during the first 15–30 minutes of your day. It actively shields you from digital stress, wakes you up with rhythmic binaural beats, and helps you form a calm morning routine across your Phone, Watch, and TV.
 
   KEY FEATURES:
 

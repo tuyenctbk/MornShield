@@ -60,6 +60,14 @@ Execute JVM unit tests by invoking:
 7. Accept all prompts and confirm you land on the Dashboard screen.
 8. Re-launch the app and confirm the onboarding screens are skipped.
 
+### Test Scenario G: Emergency Bypass
+1. Activate the Notification Shield on the mobile app.
+2. Navigate to the Puzzle Screen.
+3. Long-press on the "BRAIN WAKEUP PUZZLE" header.
+4. Verify the "Emergency Bypass" dialog appears.
+5. Click "Yes, Disable Now".
+6. Confirm the Notification Shield is immediately disabled and you are returned to the Dashboard.
+
 ### Test Scenario F: Play In-App Review & Suggest Ratings
 1. Set up a local test mock with 0 completed morning rituals.
 2. Complete 3 consecutive rituals.
