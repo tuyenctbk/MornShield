@@ -1,0 +1,212 @@
+MornShield Store Listing Materials - 15 Languages
+==================================================
+
+1. English (Default)
+------------------
+App Name: MornShield
+Short Description: Protect your morning brain from distractions with synced REM alarms.
+Full Description:
+MornShield is a privacy-first ecosystem designed to protect your brain's "buffer zone" during the first minutes of waking. By synchronizing your Phone, Wear OS, and Android TV, we ensure a calm, focused start to your day.
+
+Key Features:
+- Notification Shield: Suppresses distracting apps in RAM. No data is ever stored or uploaded. Solve a puzzle to unlock your digital world.
+- REM Alarms (Wear OS): Wakes you during your lightest sleep stage.
+- Gradual Soundscapes: 60-second acoustic fade-in to prevent "alarm shock."
+- TV Dashboard: Anchors your morning rituals on your TV with burn-in protection.
+- Zero-Cloud Policy: Your privacy is hard-coded. Data never leaves your network.
+
+2. Spanish (es)
+------------------
+App Name: MornShield
+Short Description: Protege tu cerebro matutino de distracciones con alarmas REM sincronizadas.
+Full Description:
+MornShield es un ecosistema centrado en la privacidad diseñado para proteger la "zona de amortiguación" de tu cerebro al despertar. Al sincronizar tu teléfono, Wear OS y Android TV, garantizamos un comienzo del día tranquilo y concentrado.
+
+Características principales:
+- Escudo de Notificaciones: Suprime las apps distractoras en la RAM. Resuelve un puzzle para desbloquear tu mundo digital.
+- Alarmas REM (Wear OS): Te despierta en tu fase de sueño más ligera.
+- Paisajes Sonoros Graduales: Desvanecimiento acústico de 60 segundos.
+- Panel para TV: Ancla tus rituales matutinos en tu TV con protección de pantalla.
+- Política Cero-Nube: Tu privacidad es lo primero. Los datos no salen de tu red.
+
+3. Chinese (zh)
+------------------
+App Name: MornShield
+Short Description: 通过同步的 REM 闹钟保护您的清晨大脑免受干扰。
+Full Description:
+MornShield 是一个隐私优先的生态系统，旨在保护您醒来后大脑的“缓冲区”。通过手机、Wear OS 和 Android TV 的同步，确保您的一天从平静和专注开始。
+
+核心功能：
+- 通知屏蔽：在内存中拦截干扰应用。完成谜题即可解锁您的数字世界。
+- REM 闹钟 (Wear OS)：在您最浅的睡眠阶段唤醒您。
+- 渐进式音效：60 秒音频渐入，防止“闹钟冲击”。
+- 电视仪表盘：在电视上显示您的晨间习惯，并具备防烧屏保护。
+- 零云政策：隐私硬编码。数据绝不离开您的本地网络。
+
+4. Arabic (ar)
+------------------
+App Name: MornShield
+Short Description: احمِ عقلك الصباحي من التشتت باستخدام منبهات REM المتزامنة.
+Full Description:
+MornShield هو نظام بيئي يركز على الخصوصية ومصمم لحماية "المنطقة العازلة" لعقلك خلال الدقائق الأولى من الاستيقاظ. من خلال مزامنة هاتفك وساعة Wear OS وAndroid TV، نضمن لك بداية هادئة ومركزة ليومك.
+
+الميزات الرئيسية:
+- درع الإشعارات: يحظر التطبيقات المشتتة في الذاكرة. حل لغز لفتح عالمك الرقمي.
+- منبهات REM (Wear OS): يوقظك خلال أخف مراحل نومك.
+- مشاهد صوتية تدريجية: تلاشي صوتي لمدة 60 ثانية لمنع صدمة التنبيه.
+- لوحة تحكم التلفاز: ثبت طقوسك الصباحية على تلفزيونك مع حماية الشاشة.
+- سياسة عدم التخزين السحابي: خصوصيتك محمية برمجياً. لا تغادر بياناتك شبكتك المحلية.
+
+5. German (de)
+------------------
+App Name: MornShield
+Short Description: Schützen Sie Ihr Gehirn am Morgen mit synchronisierten REM-Alarmen.
+Full Description:
+MornShield ist ein datenschutzorientiertes Ökosystem, das die „Pufferzone“ Ihres Gehirns in den ersten Minuten nach dem Aufwachen schützt. Durch die Synchronisierung von Telefon, Wear OS und Android TV ermöglichen wir einen ruhigen Start in den Tag.
+
+Hauptmerkmale:
+- Benachrichtigungsschild: Unterdrückt ablenkende Apps im RAM. Lösen Sie ein Rätsel, um Ihre digitale Welt freizuschalten.
+- REM-Alarme (Wear OS): Weckt Sie in Ihrer leichtesten Schlafphase.
+- Sanfte Klangwelten: 60-sekündiges akustisches Einblenden gegen den „Alarmschock“.
+- TV-Dashboard: Verankert Ihre Morgenrituale auf Ihrem Fernseher mit Einbrennschutz.
+- Zero-Cloud-Policy: Ihre Daten bleiben in Ihrem lokalen Netzwerk.
+
+6. French (fr)
+------------------
+App Name: MornShield
+Short Description: Protégez votre cerveau matinal des distractions avec des alarmes REM.
+Full Description:
+MornShield est un écosystème axé sur la confidentialité conçu pour protéger la "zone tampon" de votre cerveau au réveil. En synchronisant votre téléphone, Wear OS et Android TV, nous garantissons un début de journée calme et concentré.
+
+Caractéristiques :
+- Bouclier de Notifications : Supprime les applications distrayantes en RAM. Résolvez un puzzle pour déverrouiller votre monde numérique.
+- Alarmes REM (Wear OS) : Vous réveille durant votre phase de sommeil la plus légère.
+- Ambiances Sonores Progressives : Fondu acoustique de 60 secondes.
+- Tableau de Bord TV : Ancrez vos rituels du matin sur votre téléviseur.
+- Politique Zero-Cloud : Vos données ne quittent jamais votre réseau local.
+
+7. Hindi (hi)
+------------------
+App Name: MornShield
+Short Description: सिंक किए गए REM अलार्म के साथ अपने सुबह के दिमाग को विकर्षणों से बचाएं।
+Full Description:
+MornShield एक गोपनीयता-प्रथम इकोसिस्टम है जिसे जागने के पहले कुछ मिनटों के दौरान आपके मस्तिष्क के "बफर जोन" की रक्षा के लिए डिज़ाइन किया गया है। आपके फोन, Wear OS और Android TV को सिंक करके, हम आपके दिन की शांत शुरुआत सुनिश्चित करते हैं।
+
+मुख्य विशेषताएं:
+- नोटिफिकेशन शील्ड: RAM में ध्यान भटकाने वाले ऐप्स को रोकता है। अनलॉक करने के लिए एक पहेली सुलझाएं।
+- REM अलार्म (Wear OS): आपकी नींद के सबसे हल्के चरण के दौरान आपको जगाता है।
+- क्रमिक ध्वनि: "अलार्म शॉक" को रोकने के लिए 60-सेकंड का फीड-इन।
+- टीवी डैशबोर्ड: बर्न-इन सुरक्षा के साथ आपके टीवी पर आपकी सुबह की दिनचर्या।
+- जीरो-क्लाउड पॉलिसी: आपका डेटा कभी भी आपके स्थानीय नेटवर्क से बाहर नहीं जाता है।
+
+8. Indonesian (id)
+------------------
+App Name: MornShield
+Short Description: Lindungi otak pagi Anda dari gangguan dengan alarm REM yang sinkron.
+Full Description:
+MornShield adalah ekosistem privasi yang dirancang untuk melindungi "zona penyangga" otak Anda selama menit-menit pertama bangun tidur. Dengan sinkronisasi Ponsel, Wear OS, dan Android TV, kami memastikan awal ngày yang tenang.
+
+Fitur Utama:
+- Perisai Notifikasi: Menekan aplikasi yang mengganggu di RAM. Pecahkan teka-teki untuk membuka kunci dunia digital Anda.
+- Alarm REM (Wear OS): Membangunkan Anda selama tahap tidur teringan.
+- Soundscape Bertahap: Fade-in akustik 60 detik untuk mencegah "kejutan alarm."
+- Dasbor TV: Menampilkan ritual pagi Anda di TV dengan perlindungan burn-in.
+- Kebijakan Zero-Cloud: Data Anda tidak pernah meninggalkan jaringan lokal Anda.
+
+9. Italian (it)
+------------------
+App Name: MornShield
+Short Description: Proteggi il tuo cervello al mattino con sveglie REM sincronizzate.
+Full Description:
+MornShield è un ecosistema orientato alla privacy progettato per proteggere la "zona cuscinetto" del tuo cervello al risveglio. Sincronizzando telefono, Wear OS e Android TV, garantiamo un inizio di giornata calmo e concentrato.
+
+Caratteristiche principali:
+- Scudo Notifiche: Sopprime le app distraenti nella RAM. Risolvi un puzzle per sbloccare il tuo mondo digitale.
+- Sveglie REM (Wear OS): Ti sveglia durante la fase di sonno più leggera.
+- Suoni Graduali: Dissolvenza acustica di 60 secondi per evitare lo "shock da sveglia".
+- Dashboard TV: Visualizza i tuoi rituali mattutini sulla TV con protezione burn-in.
+- Politica Zero-Cloud: I tuoi dati non lasciano mai la tua rete locale.
+
+10. Japanese (ja)
+------------------
+App Name: MornShield
+Short Description: 同期されたレム睡眠アラームで、朝の脳をデジタルな誘惑から守ります。
+Full Description:
+MornShieldは、起床後の最初の数分間、脳の「バッファゾーン」を保護するために設計されたプライバシー優先のエコシステムです。スマホ、Wear OS、Android TVを同期させることで、穏やかで集中した一日の始まりをサポートします。
+
+主な機能：
+- 通知シールド：メモリ（RAM）上で邪魔なアプリを抑制します。パズルを解いてデジタル世界をアンロックしましょう。
+- レム睡眠アラーム（Wear OS）：最も浅い睡眠段階で優しく起こします。
+- 漸進的サウンド：60秒間のフェードイン音響で「アラームショック」を防ぎます。
+- TVダッシュボード：焼き付き防止機能付きで、朝のルーティンを大画面に表示します。
+- ゼロクラウド・ポリシー：データがローカルネットワーク外に出ることはありません。
+
+11. Korean (ko)
+------------------
+App Name: MornShield
+Short Description: 동기화된 REM 알람으로 아침의 뇌를 디지털 방해 요소로부터 보호하세요.
+Full Description:
+MornShield는 기상 후 첫 몇 분 동안 뇌의 "완충 지대"를 보호하도록 설계된 프라이버시 우선 에코시스템입니다. 휴대폰, Wear OS, Android TV를 동기화하여 평온하고 집중력 있는 하루의 시작을 보장합니다.
+
+주요 기능:
+- 알림 쉴드: 메모리(RAM)에서 방해되는 앱을 억제합니다. 퍼즐을 풀고 디지털 세상을 잠금 해제하세요.
+- REM 알람 (Wear OS): 가장 얕은 수면 단계에서 부드럽게 깨워줍니다.
+- 점진적 사운드: "알람 쇼크"를 방지하는 60초 페이드인 음향 효과.
+- TV 대시보드: 번인 방지 기능이 포함된 아침 루틴 체크리스트를 TV에 고정합니다.
+- 제로 클라우드 정책: 귀하의 데이터는 로컬 네트워크를 절대 떠나지 않습니다.
+
+12. Portuguese (pt)
+------------------
+App Name: MornShield
+Short Description: Proteja o seu cérebro matinal de distrações com alarmes REM sincronizados.
+Full Description:
+O MornShield é um ecossistema focado na privacidade, concebido para proteger a "zona de amortecimento" do seu cérebro ao acordar. Ao sincronizar o seu telefone, Wear OS e Android TV, garantimos um início de dia calmo e focado.
+
+Recursos principais:
+- Escudo de Notificações: Suprime apps de distração na RAM. Resolva um puzzle para desbloquear o seu mundo digital.
+- Alarmes REM (Wear OS): Acorda-o durante a fase de sono mais leve.
+- Ambientes Sonoros Graduais: Fade-in acústico de 60 segundos.
+- Painel de TV: Fixe os seus rituais matinais na TV com proteção de ecrã.
+- Política Zero-Cloud: A sua privacidade é a nossa prioridade. Os dados nunca saem da sua rede.
+
+13. Russian (ru)
+------------------
+App Name: MornShield
+Short Description: Защитите свой мозг утром от отвлекающих факторов с помощью REM-будильников.
+Full Description:
+MornShield — это экосистема, ориентированная на конфиденциальность, предназначенная для защиты «буферной зоны» вашего мозга в первые минуты пробуждения. Синхронизируя телефон, Wear OS и Android TV, мы обеспечиваем спокойное и сосредоточенное начало дня.
+
+Основные характеристики:
+- Щит уведомлений: Блокирует отвлекающие приложения в оперативной памяти. Решите головоломку, чтобы разблокировать свой цифровой мир.
+- REM-будильники (Wear OS): Будит вас в фазе самого легкого сна.
+- Постепенный звук: 60-секундное нарастание звука для предотвращения «шока от будильника».
+- ТВ-панель: Ваши утренние ритуалы на экране ТВ с защитой от выгорания.
+- Политика Zero-Cloud: Ваши данные никогда не покидают вашу локальную сеть.
+
+14. Turkish (tr)
+------------------
+App Name: MornShield
+Short Description: Senkronize REM alarmlarıyla sabah beyninizi dikkat dağıtıcı unsurlardan koruyun.
+Full Description:
+MornShield, uyandığınız ilk dakikalarda beyninizin "tampon bölgesini" korumak için tasarlanmış, gizlilik odaklı bir ekosistemdir. Telefonunuzu, Wear OS saatinizi ve Android TV'nizi senkronize ederek güne sakin ve odaklanmış bir başlangıç yapmanızı sağlar.
+
+Ana Özellikler:
+- Bildirim Kalkanı: Dikkat dağıtan uygulamaları RAM'de engeller. Dijital dünyanızın kilidini açmak için bir bulmaca çözün.
+- REM Alarları (Wear OS): Sizi uykunuzun en hafif evresinde uyandırır.
+- Kademeli Sesler: "Alarm şokunu" önlemek için 60 saniyelik akustik artış.
+- TV Paneli: Sabah ritüellerinizi ekran koruma özellikli TV'nizde görüntüleyin.
+- Sıfır Bulut Politikası: Verileriniz asla yerel ağınızdan dışarı çıkmaz.
+
+15. Vietnamese (vi)
+------------------
+App Name: MornShield
+Short Description: Bảo vệ não bộ buổi sáng khỏi sự xao nhãng với báo thức REM đồng bộ.
+Full Description:
+MornShield là một hệ sinh thái ưu tiên quyền riêng tư được thiết kế để bảo vệ "vùng đệm" của não bộ trong những phút đầu tiên khi thức dậy. Bằng cách đồng bộ hóa Điện thoại, Wear OS và Android TV, chúng tôi đảm bảo bạn có một khởi đầu ngày mới bình tĩnh và tập trung.
+
+Các tính năng chính:
+- Lá chắn thông báo: Chặn các ứng dụng gây xao nhãng trong RAM. Giải câu đố để mở khóa thế giới kỹ thuật số của bạn.
+- Báo thức REM (Wear OS): Đánh thức bạn trong giai đoạn ngủ nông nhất.
+- Âm thanh tăng dần: Âm thanh mờ dần trong 60 giây để ngăn chặn "sốc báo thức".
+- Bảng điều khiển TV: Hiển thị danh sách nhiệm vụ buổi sáng trên TV với tính năng chống lưu ảnh.
+- Chính sách không đám mây: Dữ liệu của bạn không bao giờ rời khỏi mạng nội bộ.

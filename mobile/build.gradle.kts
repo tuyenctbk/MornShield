@@ -18,13 +18,13 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.mornshield.mobile"
-    compileSdk = 37
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.mornshield.apps"
         minSdk = 24
-        targetSdk = 37
-        versionCode = 1
+        targetSdk = 34
+        versionCode = 1012
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
