@@ -29,6 +29,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -234,7 +237,14 @@ class MainActivity : ComponentActivity() {
                             },
                             onAddTask = { text ->
                                 lifecycleScope.launch {
-                                    taskDao.insertTask(TaskEntity(title = text, dateString = todayDate))
+                                    val task = TaskEntity(title = text, dateString = todayDate)
+                                    taskDao.insertTask(task)
+                                    val data = org.json.JSONObject().apply {
+                                        put("title", task.title)
+                                        put("isCompleted", task.isCompleted)
+                                        put("dateString", task.dateString)
+                                    }
+                                    nsdSyncClient.sendSyncEvent("TASK_ADDED", data)
                                     logEvent("task_added", null)
                                 }
                             },
@@ -256,6 +266,11 @@ class MainActivity : ComponentActivity() {
                             onDeleteTask = { task ->
                                 lifecycleScope.launch {
                                     taskDao.deleteTask(task)
+                                    val data = org.json.JSONObject().apply {
+                                        put("title", task.title)
+                                        put("dateString", task.dateString)
+                                    }
+                                    nsdSyncClient.sendSyncEvent("TASK_DELETED", data)
                                     logEvent("task_deleted", null)
                                 }
                             },
@@ -389,6 +404,7 @@ fun DashboardScreen(
 ) {
     var newTaskText by remember { mutableStateOf("") }
     val gradientColors = listOf(Color(0xFF0F0C20), Color(0xFF0A0915))
+    val isTablet = LocalConfiguration.current.screenWidthDp >= 600
 
     Box(
         modifier = Modifier
@@ -408,28 +424,28 @@ fun DashboardScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                            contentDescription = "Logo",
-                            modifier = Modifier.size(40.dp).clip(CircleShape).background(Color(0xFF15102A))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = "Logo",
+                        modifier = Modifier.size(40.dp).clip(CircleShape).background(Color(0xFF15102A))
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.app_name).uppercase(),
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color(0xFFC0B3FF),
+                            letterSpacing = 2.sp
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = stringResource(id = R.string.app_name).uppercase(),
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color(0xFFC0B3FF),
-                                letterSpacing = 2.sp
-                            )
-                            Text(
-                                text = stringResource(id = R.string.slogan),
-                                fontSize = 12.sp,
-                                color = Color.Gray
-                            )
-                        }
+                        Text(
+                            text = stringResource(id = R.string.slogan),
+                            fontSize = 12.sp,
+                            color = Color.Gray
+                        )
                     }
+                }
 
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
@@ -442,344 +458,581 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Alarm Status Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.6f)),
-                border = boxBorder()
-            ) {
+            if (isTablet) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    Column {
-                        Text(stringResource(id = R.string.cycle_synced_alarm), color = Color(0xFFC0B3FF), fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = String.format(Locale.US, "%02d:%02d AM", alarmHour, alarmMinute),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color.White
-                        )
-                        
-                        val startH = if (alarmMinute >= windowSize) alarmHour else (alarmHour + 23) % 24
-                        val startM = if (alarmMinute >= windowSize) alarmMinute - windowSize else 60 + alarmMinute - windowSize
-                        val startTimeStr = String.format(Locale.US, "%02d:%02d", startH, startM)
-                        
-                        Text(
-                            text = stringResource(id = R.string.rem_window, windowSize, startTimeStr),
-                            fontSize = 11.sp,
-                            color = Color.Gray
-                        )
-                    }
-
-                    Box(
+                    // Left Column (Controls & Analytics)
+                    Column(
                         modifier = Modifier
-                            .size(54.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF7A60FF).copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
+                            .weight(1.2f)
+                            .fillMaxHeight()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Alarm,
-                            contentDescription = "Alarm Active",
-                            tint = Color(0xFF7A60FF),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Notification Shield Control Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isShieldActive) Color(0xFF4A1525).copy(alpha = 0.5f) else Color(0xFF16132C).copy(alpha = 0.6f)
-                ),
-                border = boxBorder()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(id = if (isShieldActive) R.string.shield_active else R.string.shield_inactive),
-                                color = if (isShieldActive) Color(0xFFFF5252) else Color(0xFFC0B3FF),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = if (isShieldActive) 
-                                    stringResource(id = R.string.suppressing_distractions, suppressedCount)
-                                else 
-                                    stringResource(id = R.string.notifications_flowing),
-                                fontSize = 13.sp,
-                                color = Color.White
-                            )
-                        }
-
-                        Button(
-                            onClick = onToggleShield,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isShieldActive) Color(0xFFFF5252) else Color(0xFF7A60FF)
-                            ),
-                            shape = RoundedCornerShape(8.dp)
+                        // Alarm Status Card
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.6f)),
+                            border = boxBorder()
                         ) {
-                            Text(stringResource(id = if (isShieldActive) R.string.unlock else R.string.shield_on), color = Color.White, fontSize = 12.sp)
-                        }
-                    }
-                }
-            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(stringResource(id = R.string.cycle_synced_alarm), color = Color(0xFFC0B3FF), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = String.format(Locale.US, "%02d:%02d AM", alarmHour, alarmMinute),
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = Color.White
+                                    )
+                                    
+                                    val startH = if (alarmMinute >= windowSize) alarmHour else (alarmHour + 23) % 24
+                                    val startM = if (alarmMinute >= windowSize) alarmMinute - windowSize else 60 + alarmMinute - windowSize
+                                    val startTimeStr = String.format(Locale.US, "%02d:%02d", startH, startM)
+                                    
+                                    Text(
+                                        text = stringResource(id = R.string.rem_window, windowSize, startTimeStr),
+                                        fontSize = 11.sp,
+                                        color = Color.Gray
+                                    )
+                                }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Streaks mapping
-            Text(
-                text = stringResource(id = R.string.morning_ritual_streaks),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFC0B3FF),
-                letterSpacing = 1.sp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Streak tracker visual circles (7 days)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                val last7Days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-                last7Days.forEachIndexed { idx, day ->
-                    val isDone = idx < 4 // Simulating past streak completed
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(if (isDone) Color(0xFF2E7D32) else Color(0xFF221F35))
-                                .border(1.dp, if (isDone) Color.Green else Color.Gray.copy(alpha = 0.2f), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (isDone) {
-                                Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.done), tint = Color.White, modifier = Modifier.size(16.dp))
-                            } else {
-                                Text(day.first().toString(), color = Color.Gray, fontSize = 12.sp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(54.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFF7A60FF).copy(alpha = 0.2f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Alarm,
+                                        contentDescription = "Alarm Active",
+                                        tint = Color(0xFF7A60FF),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
                             }
                         }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(day, fontSize = 10.sp, color = Color.Gray)
+
+                        // Notification Shield Control Card
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isShieldActive) Color(0xFF4A1525).copy(alpha = 0.5f) else Color(0xFF16132C).copy(alpha = 0.6f)
+                            ),
+                            border = boxBorder()
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = stringResource(id = if (isShieldActive) R.string.shield_active else R.string.shield_inactive),
+                                            color = if (isShieldActive) Color(0xFFFF5252) else Color(0xFFC0B3FF),
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = 1.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = if (isShieldActive) 
+                                                stringResource(id = R.string.suppressing_distractions, suppressedCount)
+                                            else 
+                                                stringResource(id = R.string.notifications_flowing),
+                                            fontSize = 13.sp,
+                                            color = Color.White
+                                        )
+                                    }
+
+                                    Button(
+                                        onClick = onToggleShield,
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = if (isShieldActive) Color(0xFFFF5252) else Color(0xFF7A60FF)
+                                        ),
+                                        shape = RoundedCornerShape(8.dp)
+                                    ) {
+                                        Text(stringResource(id = if (isShieldActive) R.string.unlock else R.string.shield_on), color = Color.White, fontSize = 12.sp)
+                                    }
+                                }
+                            }
+                        }
+
+                        // Streaks mapping
+                        Column {
+                            Text(
+                                text = stringResource(id = R.string.morning_ritual_streaks),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFC0B3FF),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                val last7Days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+                                last7Days.forEachIndexed { idx, day ->
+                                    val isDone = idx < 4 
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .clip(CircleShape)
+                                                .background(if (isDone) Color(0xFF2E7D32) else Color(0xFF221F35))
+                                                .border(1.dp, if (isDone) Color.Green else Color.Gray.copy(alpha = 0.2f), CircleShape),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (isDone) {
+                                                Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.done), tint = Color.White, modifier = Modifier.size(16.dp))
+                                            } else {
+                                                Text(day.first().toString(), color = Color.Gray, fontSize = 12.sp)
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(day, fontSize = 10.sp, color = Color.Gray)
+                                    }
+                                }
+                            }
+                        }
+
+                        // Advanced Analytics Chart
+                        Column {
+                            Text(
+                                text = stringResource(id = R.string.sleep_quality_trend),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFC0B3FF),
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                                    .padding(horizontal = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                val displayLogs = sleepLogs.takeLast(7)
+                                displayLogs.forEach { log ->
+                                    val barHeightFactor = log.sleepQualityScore / 10f
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight(barHeightFactor.coerceAtLeast(0.1f))
+                                            .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFF7A60FF), Color(0xFFC0B3FF).copy(alpha = 0.5f))
+                                                )
+                                            )
+                                    )
+                                }
+                                
+                                repeat(7 - displayLogs.size) {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(4.dp)
+                                            .clip(RoundedCornerShape(2.dp))
+                                            .background(Color.Gray.copy(alpha = 0.1f))
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Right Column (Checklist)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    ) {
+                        ChecklistContent(
+                            todayTasks = todayTasks,
+                            newTaskText = newTaskText,
+                            onNewTaskTextChange = { newTaskText = it },
+                            onAddTask = onAddTask,
+                            onToggleTask = onToggleTask,
+                            onDeleteTask = onDeleteTask,
+                            listModifier = Modifier.weight(1f)
+                        )
                     }
                 }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Advanced Analytics Chart (Phase 3)
-            Text(
-                text = stringResource(id = R.string.sleep_quality_trend),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFC0B3FF),
-                letterSpacing = 1.sp
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .padding(horizontal = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                // Display up to 7 sleep logs as bars
-                val displayLogs = sleepLogs.takeLast(7)
-                displayLogs.forEach { log ->
-                    val barHeightFactor = log.sleepQualityScore / 10f
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(barHeightFactor.coerceAtLeast(0.1f))
-                            .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color(0xFF7A60FF), Color(0xFFC0B3FF).copy(alpha = 0.5f))
+            } else {
+                // Phone Layout (Single column)
+                Column(modifier = Modifier.weight(1f)) {
+                    // Alarm Status Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.6f)),
+                        border = boxBorder()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(stringResource(id = R.string.cycle_synced_alarm), color = Color(0xFFC0B3FF), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = String.format(Locale.US, "%02d:%02d AM", alarmHour, alarmMinute),
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White
                                 )
-                            )
-                    )
-                }
-                
-                // Filler for empty days
-                repeat(7 - displayLogs.size) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(Color.Gray.copy(alpha = 0.1f))
-                    )
-                }
-            }
+                                
+                                val startH = if (alarmMinute >= windowSize) alarmHour else (alarmHour + 23) % 24
+                                val startM = if (alarmMinute >= windowSize) alarmMinute - windowSize else 60 + alarmMinute - windowSize
+                                val startTimeStr = String.format(Locale.US, "%02d:%02d", startH, startM)
+                                
+                                Text(
+                                    text = stringResource(id = R.string.rem_window, windowSize, startTimeStr),
+                                    fontSize = 11.sp,
+                                    color = Color.Gray
+                                )
+                            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(54.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF7A60FF).copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Alarm,
+                                    contentDescription = "Alarm Active",
+                                    tint = Color(0xFF7A60FF),
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
 
-            // 3-Task Morning List Title
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.today_rituals, todayTasks.count { it.isCompleted }, todayTasks.size),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFC0B3FF),
-                    letterSpacing = 1.sp
-                )
-                
-                if (todayTasks.isNotEmpty()) {
-                    val progress = todayTasks.count { it.isCompleted }.toFloat() / todayTasks.size
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Notification Shield Control Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isShieldActive) Color(0xFF4A1525).copy(alpha = 0.5f) else Color(0xFF16132C).copy(alpha = 0.6f)
+                        ),
+                        border = boxBorder()
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = stringResource(id = if (isShieldActive) R.string.shield_active else R.string.shield_inactive),
+                                        color = if (isShieldActive) Color(0xFFFF5252) else Color(0xFFC0B3FF),
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = 1.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = if (isShieldActive) 
+                                            stringResource(id = R.string.suppressing_distractions, suppressedCount)
+                                        else 
+                                            stringResource(id = R.string.notifications_flowing),
+                                        fontSize = 13.sp,
+                                        color = Color.White
+                                    )
+                                }
+
+                                Button(
+                                    onClick = onToggleShield,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = if (isShieldActive) Color(0xFFFF5252) else Color(0xFF7A60FF)
+                                    ),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text(stringResource(id = if (isShieldActive) R.string.unlock else R.string.shield_on), color = Color.White, fontSize = 12.sp)
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Streaks mapping
                     Text(
-                        text = "${(progress * 100).toInt()}%",
+                        text = stringResource(id = R.string.morning_ritual_streaks),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (progress == 1f) Color.Green else Color(0xFF7A60FF)
+                        color = Color(0xFFC0B3FF),
+                        letterSpacing = 1.sp
                     )
-                }
-            }
-
-            if (todayTasks.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(6.dp))
-                val progress = todayTasks.count { it.isCompleted }.toFloat() / todayTasks.size
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = Color(0xFF7A60FF),
-                    trackColor = Color(0xFF221F35)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Add Task row
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(
-                    value = newTaskText,
-                    onValueChange = { newTaskText = it },
-                    placeholder = { Text(stringResource(id = R.string.add_task_hint), color = Color.Gray, fontSize = 13.sp) },
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFF7A60FF),
-                        unfocusedBorderColor = Color(0xFF2C2750)
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = {
-                        if (newTaskText.trim().isNotEmpty()) {
-                            onAddTask(newTaskText.trim())
-                            newTaskText = ""
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        val last7Days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+                        last7Days.forEachIndexed { idx, day ->
+                            val isDone = idx < 4 
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .clip(CircleShape)
+                                        .background(if (isDone) Color(0xFF2E7D32) else Color(0xFF221F35))
+                                        .border(1.dp, if (isDone) Color.Green else Color.Gray.copy(alpha = 0.2f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (isDone) {
+                                        Icon(Icons.Default.Check, contentDescription = stringResource(id = R.string.done), tint = Color.White, modifier = Modifier.size(16.dp))
+                                    } else {
+                                        Text(day.first().toString(), color = Color.Gray, fontSize = 12.sp)
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(day, fontSize = 10.sp, color = Color.Gray)
+                            }
                         }
-                    },
-                    modifier = Modifier
-                        .size(46.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFF7A60FF))
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_task), tint = Color.White)
-                }
-            }
+                    }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-            // Tasks List
-            LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                items(todayTasks) { task ->
+                    // Advanced Analytics Chart
+                    Text(
+                        text = stringResource(id = R.string.sleep_quality_trend),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFC0B3FF),
+                        letterSpacing = 1.sp
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFF16132C).copy(alpha = 0.5f))
-                            .border(1.dp, Color(0xFF2C2750), RoundedCornerShape(8.dp))
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .height(80.dp)
+                            .padding(horizontal = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.Bottom
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                            Checkbox(
-                                checked = task.isCompleted,
-                                onCheckedChange = { onToggleTask(task) },
-                                colors = CheckboxDefaults.colors(checkedColor = Color(0xFF7A60FF))
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            
-                            // Enhanced markdown rendering: **bold**, *italic*
-                            val annotatedTitle = remember(task.title) {
-                                buildAnnotatedString {
-                                    val text = task.title
-                                    val regex = "(\\d+)|(\\*\\*.*?\\*\\*)|(\\*.*?\\*)|(_.*?_)".toRegex()
-                                    var lastIndex = 0
-                                    regex.findAll(text).forEach { match ->
-                                        append(text.substring(lastIndex, match.range.first))
-                                        val matchText = match.value
-                                        when {
-                                            matchText.startsWith("**") -> {
-                                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                                    append(matchText.removeSurrounding("**"))
-                                                }
-                                            }
-                                            matchText.startsWith("*") -> {
-                                                withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                                                    append(matchText.removeSurrounding("*"))
-                                                }
-                                            }
-                                            matchText.startsWith("_") -> {
-                                                withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                                                    append(matchText.removeSurrounding("_"))
-                                                }
-                                            }
-                                            else -> append(matchText)
-                                        }
-                                        lastIndex = match.range.last + 1
-                                    }
-                                    append(text.substring(lastIndex))
-                                }
-                            }
-                            
-                            Text(
-                                text = annotatedTitle,
-                                color = if (task.isCompleted) Color.Gray else Color.White,
-                                fontSize = 14.sp
+                        val displayLogs = sleepLogs.takeLast(7)
+                        displayLogs.forEach { log ->
+                            val barHeightFactor = log.sleepQualityScore / 10f
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight(barHeightFactor.coerceAtLeast(0.1f))
+                                    .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF7A60FF), Color(0xFFC0B3FF).copy(alpha = 0.5f))
+                                        )
+                                    )
                             )
                         }
-
-                        IconButton(onClick = { onDeleteTask(task) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color(0xFFFF5252).copy(alpha = 0.7f), modifier = Modifier.size(18.dp))
+                        
+                        repeat(7 - displayLogs.size) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(4.dp)
+                                    .clip(RoundedCornerShape(2.dp))
+                                    .background(Color.Gray.copy(alpha = 0.1f))
+                            )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Checklist
+                    ChecklistContent(
+                        todayTasks = todayTasks,
+                        newTaskText = newTaskText,
+                        onNewTaskTextChange = { newTaskText = it },
+                        onAddTask = onAddTask,
+                        onToggleTask = onToggleTask,
+                        onDeleteTask = onDeleteTask,
+                        listModifier = Modifier.weight(1f)
+                    )
                 }
             }
 
             // AdMob Adaptive Banner Ad
             AdsHelper.BannerAd(isPremium = isPremium)
+        }
+    }
+}
+
+@Composable
+fun ChecklistContent(
+    todayTasks: List<TaskEntity>,
+    newTaskText: String,
+    onNewTaskTextChange: (String) -> Unit,
+    onAddTask: (String) -> Unit,
+    onToggleTask: (TaskEntity) -> Unit,
+    onDeleteTask: (TaskEntity) -> Unit,
+    listModifier: Modifier
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(id = R.string.today_rituals, todayTasks.count { it.isCompleted }, todayTasks.size),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFC0B3FF),
+            letterSpacing = 1.sp
+        )
+        
+        if (todayTasks.isNotEmpty()) {
+            val progress = todayTasks.count { it.isCompleted }.toFloat() / todayTasks.size
+            Text(
+                text = "${(progress * 100).toInt()}%",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = if (progress == 1f) Color.Green else Color(0xFF7A60FF)
+            )
+        }
+    }
+
+    if (todayTasks.isNotEmpty()) {
+        Spacer(modifier = Modifier.height(6.dp))
+        val progress = todayTasks.count { it.isCompleted }.toFloat() / todayTasks.size
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(RoundedCornerShape(3.dp)),
+            color = Color(0xFF7A60FF),
+            trackColor = Color(0xFF221F35)
+        )
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Add Task row
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        OutlinedTextField(
+            value = newTaskText,
+            onValueChange = onNewTaskTextChange,
+            placeholder = { Text(stringResource(id = R.string.add_task_hint), color = Color.Gray, fontSize = 13.sp) },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color(0xFF7A60FF),
+                unfocusedBorderColor = Color(0xFF2C2750)
+            ),
+            modifier = Modifier
+                .weight(1f)
+                .height(50.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        IconButton(
+            onClick = {
+                if (newTaskText.trim().isNotEmpty()) {
+                    onAddTask(newTaskText.trim())
+                }
+            },
+            modifier = Modifier
+                .size(46.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color(0xFF7A60FF))
+        ) {
+            Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_task), tint = Color.White)
+        }
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Tasks List
+    LazyColumn(modifier = listModifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        items(todayTasks) { task ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF16132C).copy(alpha = 0.5f))
+                    .border(1.dp, Color(0xFF2C2750), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                    Checkbox(
+                        checked = task.isCompleted,
+                        onCheckedChange = { onToggleTask(task) },
+                        colors = CheckboxDefaults.colors(checkedColor = Color(0xFF7A60FF))
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    // Enhanced markdown rendering: **bold**, *italic*
+                    val annotatedTitle = remember(task.title) {
+                        buildAnnotatedString {
+                            val text = task.title
+                            val regex = "(\\d+)|(\\*\\*.*?\\*\\*)|(\\*.*?\\*)|(_.*?_)".toRegex()
+                            var lastIndex = 0
+                            regex.findAll(text).forEach { match ->
+                                append(text.substring(lastIndex, match.range.first))
+                                val matchText = match.value
+                                when {
+                                    matchText.startsWith("**") -> {
+                                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                            append(matchText.removeSurrounding("**"))
+                                        }
+                                    }
+                                    matchText.startsWith("*") -> {
+                                        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                                            append(matchText.removeSurrounding("*"))
+                                        }
+                                    }
+                                    matchText.startsWith("_") -> {
+                                        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                                            append(matchText.removeSurrounding("_"))
+                                        }
+                                    }
+                                    else -> append(matchText)
+                                }
+                                lastIndex = match.range.last + 1
+                            }
+                            append(text.substring(lastIndex))
+                        }
+                    }
+                    
+                    Text(
+                        text = annotatedTitle,
+                        color = if (task.isCompleted) Color.Gray else Color.White,
+                        fontSize = 14.sp
+                    )
+                }
+
+                IconButton(onClick = { onDeleteTask(task) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color(0xFFFF5252).copy(alpha = 0.7f), modifier = Modifier.size(18.dp))
+                }
+            }
         }
     }
 }

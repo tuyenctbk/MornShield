@@ -28,6 +28,12 @@ import com.mornshield.wear.sensor.GestureDetector
 import com.mornshield.wear.sleep.SleepMonitor
 import com.mornshield.wear.sleep.SleepStage
 import com.mornshield.core.sync.NsdSyncClient
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class WearMainActivity : ComponentActivity() {
 
@@ -73,8 +79,22 @@ class WearMainActivity : ComponentActivity() {
                 }
             }
 
+            val isAlarmPlaying by FadeInAlarmService.isAlarmPlaying.collectAsState()
+
+            LaunchedEffect(isAlarmPlaying) {
+                if (isAlarmPlaying) {
+                    window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+
             if (hasPermissions) {
-                WearApp()
+                if (isAlarmPlaying) {
+                    AlarmRingingScreen()
+                } else {
+                    WearApp()
+                }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text("Permissions required", textAlign = TextAlign.Center)
@@ -122,7 +142,7 @@ class WearMainActivity : ComponentActivity() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
+                Chip(
                     onClick = {
                         isMonitoring = !isMonitoring
                         if (isMonitoring) {
@@ -134,12 +154,18 @@ class WearMainActivity : ComponentActivity() {
                             stopAlarmService()
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(
+                    colors = ChipDefaults.chipColors(
                         backgroundColor = if (isMonitoring) Color(0xFFD32F2F) else Color(0xFF7A60FF)
-                    )
-                ) {
-                    Text(if (isMonitoring) stringResource(id = R.string.stop) else stringResource(id = R.string.start_tracking))
-                }
+                    ),
+                    label = {
+                        Text(
+                            text = if (isMonitoring) stringResource(id = R.string.stop) else stringResource(id = R.string.start_tracking),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(0.85f)
+                )
                 
                 if (isMonitoring) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -149,6 +175,85 @@ class WearMainActivity : ComponentActivity() {
                         color = Color.Gray
                     )
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun AlarmRingingScreen() {
+        var holdProgress by remember { mutableStateOf(0f) }
+        val coroutineScope = rememberCoroutineScope()
+        var holdJob by remember { mutableStateOf<Job?>(null) }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                val down = awaitFirstDown()
+                                // Touch detected, start progress build up
+                                holdJob?.cancel()
+                                holdJob = coroutineScope.launch {
+                                    val startTime = System.currentTimeMillis()
+                                    while (true) {
+                                        val elapsed = System.currentTimeMillis() - startTime
+                                        holdProgress = (elapsed / 3000f).coerceAtMost(1f)
+                                        if (holdProgress >= 1f) {
+                                            stopAlarmService()
+                                            break
+                                        }
+                                        delay(30)
+                                    }
+                                }
+                                // Wait for release or cancel
+                                waitForUpOrCancellation()
+                                holdJob?.cancel()
+                                holdProgress = 0f
+                            }
+                        }
+                    }
+            ) {
+                Text(
+                    text = "WAKE UP",
+                    style = MaterialTheme.typography.caption1,
+                    color = Color(0xFFFF5252),
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(80.dp)
+                ) {
+                    CircularProgressIndicator(
+                        progress = holdProgress,
+                        modifier = Modifier.fillMaxSize(),
+                        startAngle = 270f,
+                        indicatorColor = Color(0xFF7A60FF),
+                        trackColor = Color.DarkGray
+                    )
+                    Text(
+                        text = "HOLD",
+                        style = MaterialTheme.typography.button,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Hold for 3s to dismiss",
+                    style = MaterialTheme.typography.caption2,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

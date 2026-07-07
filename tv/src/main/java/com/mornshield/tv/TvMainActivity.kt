@@ -70,6 +70,31 @@ class TvMainActivity : ComponentActivity() {
                         taskDao.insertTask(TaskEntity(title = title, isCompleted = isCompleted, dateString = dateString))
                     }
                 }
+            } else if (event == "TASK_ADDED" && data != null) {
+                val title = data.optString("title")
+                val isCompleted = data.optBoolean("isCompleted")
+                val dateString = data.optString("dateString")
+                
+                lifecycleScope.launch {
+                    val taskDao = database.taskDao()
+                    val existingTasks = taskDao.getTasksForDateList(dateString)
+                    val task = existingTasks.find { it.title == title }
+                    if (task == null) {
+                        taskDao.insertTask(TaskEntity(title = title, isCompleted = isCompleted, dateString = dateString))
+                    }
+                }
+            } else if (event == "TASK_DELETED" && data != null) {
+                val title = data.optString("title")
+                val dateString = data.optString("dateString")
+                
+                lifecycleScope.launch {
+                    val taskDao = database.taskDao()
+                    val existingTasks = taskDao.getTasksForDateList(dateString)
+                    val task = existingTasks.find { it.title == title }
+                    if (task != null) {
+                        taskDao.deleteTask(task)
+                    }
+                }
             } else if (event == "REM_DETECTED") {
                 // TV could react to REM detection (e.g., wake up screen)
             }
@@ -88,6 +113,17 @@ class TvMainActivity : ComponentActivity() {
 fun TvDashboardScreen(database: MornShieldDatabase) {
     val todayDate = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()) }
     var tasks by remember { mutableStateOf(emptyList<TaskEntity>()) }
+    var offsetX by remember { mutableStateOf(0.dp) }
+    var offsetY by remember { mutableStateOf(0.dp) }
+
+    LaunchedEffect(Unit) {
+        val random = java.util.Random()
+        while (true) {
+            kotlinx.coroutines.delay(60000)
+            offsetX = (random.nextInt(31) - 15).dp
+            offsetY = (random.nextInt(31) - 15).dp
+        }
+    }
 
     LaunchedEffect(Unit) {
         database.taskDao().getTasksForDate(todayDate).collectLatest {
@@ -104,7 +140,11 @@ fun TvDashboardScreen(database: MornShieldDatabase) {
                 )
             )
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(x = offsetX, y = offsetY)
+        ) {
             // Left Panel: Time & Status
             Column(
                 modifier = Modifier
@@ -120,6 +160,8 @@ fun TvDashboardScreen(database: MornShieldDatabase) {
                     letterSpacing = 4.sp
                 )
                 
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 var currentTime by remember { mutableStateOf(Date()) }
                 LaunchedEffect(Unit) {
                     while (true) {
@@ -131,10 +173,14 @@ fun TvDashboardScreen(database: MornShieldDatabase) {
                 Text(
                     text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(currentTime),
                     style = MaterialTheme.typography.displayLarge,
-                    fontSize = 120.sp,
+                    fontSize = 90.sp,
+                    lineHeight = 90.sp,
+                    softWrap = false,
                     fontWeight = FontWeight.Black,
                     color = Color.White
                 )
+                
+                Spacer(modifier = Modifier.height(12.dp))
                 
                 Text(
                     text = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(currentTime),

@@ -14,13 +14,41 @@ class BackupManager(private val context: Context) {
 
     suspend fun createEncryptedBackup(): File? = withContext(Dispatchers.IO) {
         try {
-            // Logic to get data from DAO
-            val tasks = database.taskDao().getTasksForDateList("") 
+            // Get all tasks and sleep logs from database
+            val tasks = database.taskDao().getAllTasksList()
+            val logs = database.sleepLogDao().getAllLogsList()
             
+            val tasksArray = org.json.JSONArray().apply {
+                tasks.forEach { task ->
+                    put(JSONObject().apply {
+                        put("id", task.id)
+                        put("title", task.title)
+                        put("isCompleted", task.isCompleted)
+                        put("dateString", task.dateString)
+                        put("markdownDetail", task.markdownDetail)
+                    })
+                }
+            }
+
+            val logsArray = org.json.JSONArray().apply {
+                logs.forEach { log ->
+                    put(JSONObject().apply {
+                        put("id", log.id)
+                        put("dateString", log.dateString)
+                        put("startTime", log.startTime)
+                        put("endTime", log.endTime)
+                        put("sleepQualityScore", log.sleepQualityScore)
+                        put("ritualCompleted", log.ritualCompleted)
+                    })
+                }
+            }
+
             val backupObject = JSONObject().apply {
                 put("version", 1)
                 put("timestamp", System.currentTimeMillis())
                 put("tasks_count", tasks.size)
+                put("tasks", tasksArray)
+                put("sleep_logs", logsArray)
             }
 
             val backupFile = File(context.filesDir, "mornshield_backup.enc")

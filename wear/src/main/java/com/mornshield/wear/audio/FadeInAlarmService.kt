@@ -18,6 +18,7 @@ import com.mornshield.wear.presentation.WearMainActivity
 import kotlinx.coroutines.*
 import java.util.Timer
 import java.util.TimerTask
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class FadeInAlarmService : Service() {
 
@@ -52,6 +53,7 @@ class FadeInAlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, createNotification())
         startAcousticMixer()
+        isAlarmPlaying.value = true
         return START_STICKY
     }
 
@@ -100,6 +102,7 @@ class FadeInAlarmService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isAlarmPlaying.value = false
         try {
             playerLayer1?.stop(); playerLayer1?.release()
             playerLayer2?.stop(); playerLayer2?.release()
@@ -111,4 +114,8 @@ class FadeInAlarmService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    companion object {
+        val isAlarmPlaying = MutableStateFlow(false)
+    }
 }

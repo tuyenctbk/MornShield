@@ -19,15 +19,19 @@ object RatingHelper {
     fun triggerReviewFlow(activity: Activity, force: Boolean = false) {
         val prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val ritualsDone = prefs.getInt(KEY_RITUALS_DONE, 0)
+        val hasShownReview = prefs.getBoolean("has_shown_review", false)
 
         // Only trigger after 3 successful ritual completions, or if forced via settings
-        if (ritualsDone >= 3 || force) {
+        if ((ritualsDone >= 3 && !hasShownReview) || force) {
             val manager = ReviewManagerFactory.create(activity)
             val request = manager.requestReviewFlow()
             request.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val reviewInfo = task.result
                     manager.launchReviewFlow(activity, reviewInfo)
+                    if (!force) {
+                        prefs.edit().putBoolean("has_shown_review", true).apply()
+                    }
                 } else {
                     Log.w("RatingHelper", "Review flow request failed")
                 }

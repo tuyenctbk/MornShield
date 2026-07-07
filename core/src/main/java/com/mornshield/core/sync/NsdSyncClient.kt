@@ -19,6 +19,7 @@ class NsdSyncClient(context: Context) {
     
     private var discoveryListener: NsdManager.DiscoveryListener? = null
     private var resolvedServiceInfo: NsdServiceInfo? = null
+    private var serviceInfoCallback: NsdManager.ServiceInfoCallback? = null
     
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -55,7 +56,7 @@ class NsdSyncClient(context: Context) {
                 
                 if (serviceInfo.serviceType.contains(SERVICE_TYPE)) {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        nsdManager.registerServiceInfoCallback(serviceInfo, Dispatchers.IO.asExecutor(), object : NsdManager.ServiceInfoCallback {
+                        val callback = object : NsdManager.ServiceInfoCallback {
                             override fun onServiceInfoCallbackRegistrationFailed(errorCode: Int) {
                                 Log.e("NsdSyncClient", "Callback registration failed: $errorCode")
                             }
@@ -72,7 +73,9 @@ class NsdSyncClient(context: Context) {
                             }
 
                             override fun onServiceInfoCallbackUnregistered() {}
-                        })
+                        }
+                        serviceInfoCallback = callback
+                        nsdManager.registerServiceInfoCallback(serviceInfo, Dispatchers.IO.asExecutor(), callback)
                     } else {
                         @Suppress("DEPRECATION")
                         nsdManager.resolveService(serviceInfo, object : NsdManager.ResolveListener {
@@ -113,6 +116,14 @@ class NsdSyncClient(context: Context) {
         }
         discoveryListener = null
         resolvedServiceInfo = null
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            serviceInfoCallback?.let {
+                try {
+                    nsdManager.unregisterServiceInfoCallback(it)
+                } catch (e: Exception) {}
+            }
+            serviceInfoCallback = null
+        }
         isDiscovering = false
     }
 
