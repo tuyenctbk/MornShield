@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import android.content.Context
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,16 +39,20 @@ class TvMainActivity : ComponentActivity() {
 
     private lateinit var database: MornShieldDatabase
     private lateinit var syncServer: NsdSyncServer
+    private val isPremiumState = mutableStateOf(false)
 
     @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         database = MornShieldDatabase.getInstance(this)
+        
+        val prefs = getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+        isPremiumState.value = prefs.getBoolean("premium_unlocked", false)
 
         setContent {
             MaterialTheme {
-                TvDashboardScreen(database)
+                TvDashboardScreen(database, isPremiumState.value)
             }
         }
 
@@ -95,6 +101,11 @@ class TvMainActivity : ComponentActivity() {
                         taskDao.deleteTask(task)
                     }
                 }
+            } else if (event == "PREMIUM_UPDATED" && data != null) {
+                val isPremiumSync = data.optBoolean("isPremium")
+                val prefs = getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+                prefs.edit().putBoolean("premium_unlocked", isPremiumSync).apply()
+                isPremiumState.value = isPremiumSync
             } else if (event == "REM_DETECTED") {
                 // TV could react to REM detection (e.g., wake up screen)
             }
@@ -110,7 +121,8 @@ class TvMainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun TvDashboardScreen(database: MornShieldDatabase) {
+fun TvDashboardScreen(database: MornShieldDatabase, isPremium: Boolean) {
+
     val todayDate = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()) }
     var tasks by remember { mutableStateOf(emptyList<TaskEntity>()) }
     var offsetX by remember { mutableStateOf(0.dp) }
@@ -126,8 +138,19 @@ fun TvDashboardScreen(database: MornShieldDatabase) {
     }
 
     LaunchedEffect(Unit) {
-        database.taskDao().getTasksForDate(todayDate).collectLatest {
-            tasks = it
+        val taskDao = database.taskDao()
+        launch {
+            taskDao.getTasksForDate(todayDate).collectLatest {
+                tasks = it
+            }
+        }
+        launch {
+            val existing = taskDao.getTasksForDateList(todayDate)
+            if (existing.isEmpty()) {
+                taskDao.insertTask(TaskEntity(title = "Hydrate (500ml water)", isCompleted = true, dateString = todayDate))
+                taskDao.insertTask(TaskEntity(title = "Stretching (5 mins)", isCompleted = false, dateString = todayDate))
+                taskDao.insertTask(TaskEntity(title = "Read 2 pages of a book", isCompleted = false, dateString = todayDate))
+            }
         }
     }
 
@@ -217,9 +240,22 @@ fun TvDashboardScreen(database: MornShieldDatabase) {
                         )
                     }
                 } else {
+                    val displayTasks = if (isPremium) tasks else tasks.take(3)
+                    
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(tasks) { task ->
+                        items(displayTasks) { task ->
                             TvTaskItem(task)
+                        }
+                        
+                        if (!isPremium && tasks.size > 3) {
+                            item {
+                                Text(
+                                    text = stringResource(id = R.string.more_pending, tasks.size - 3),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color(0xFF7A60FF),
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
                         }
                     }
                 }

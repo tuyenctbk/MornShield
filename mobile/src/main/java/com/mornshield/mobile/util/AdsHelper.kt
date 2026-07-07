@@ -46,9 +46,13 @@ object AdsHelper {
     fun initialize(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
         try {
-            MobileAds.initialize(context) {
-                loadInterstitial(context.applicationContext)
-            }
+            Thread {
+                try {
+                    MobileAds.initialize(context) {
+                        loadInterstitial(context.applicationContext)
+                    }
+                } catch (e: Exception) {}
+            }.start()
             incrementOpenCount(context)
         } catch (e: Exception) {}
     }

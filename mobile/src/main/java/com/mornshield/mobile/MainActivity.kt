@@ -169,6 +169,45 @@ class MainActivity : ComponentActivity() {
                         sleepLogs = it
                     }
                 }
+                launch(kotlinx.coroutines.Dispatchers.IO) {
+                    val existingTasks = taskDao.getTasksForDateList(todayDate)
+                    if (existingTasks.isEmpty()) {
+                        taskDao.insertTask(TaskEntity(title = "Hydrate (500ml water)", dateString = todayDate))
+                        taskDao.insertTask(TaskEntity(title = "Stretching (5 mins)", dateString = todayDate))
+                        taskDao.insertTask(TaskEntity(title = "Read 2 pages of a book", dateString = todayDate))
+                    }
+                    val existingLogs = sleepLogDao.getAllLogsList()
+                    if (existingLogs.isEmpty()) {
+                        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val calendar = java.util.Calendar.getInstance()
+                        val scores = listOf(8, 7, 9, 6, 8, 7, 9)
+                        for (i in 6 downTo 0) {
+                            calendar.time = Date()
+                            calendar.add(java.util.Calendar.DAY_OF_YEAR, -i)
+                            val dateStr = sdf.format(calendar.time)
+                            
+                            calendar.set(java.util.Calendar.HOUR_OF_DAY, 22)
+                            calendar.set(java.util.Calendar.MINUTE, 30)
+                            val startMs = calendar.timeInMillis
+                            
+                            calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+                            calendar.set(java.util.Calendar.HOUR_OF_DAY, 6)
+                            calendar.set(java.util.Calendar.MINUTE, 30)
+                            val endMs = calendar.timeInMillis
+                            
+                            val score = scores[i % scores.size]
+                            sleepLogDao.insertLog(
+                                SleepLogEntity(
+                                    dateString = dateStr,
+                                    startTime = startMs,
+                                    endTime = endMs,
+                                    sleepQualityScore = score,
+                                    ritualCompleted = true
+                                )
+                            )
+                        }
+                    }
+                }
             }
 
             AnimatedContent(
@@ -226,13 +265,8 @@ class MainActivity : ComponentActivity() {
                                 if (isShieldActive) {
                                     currentScreen = AppScreen.PUZZLE
                                 } else {
-                                    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
-                                    if (!isNotificationListenerEnabled() || !notificationManager.isNotificationPolicyAccessGranted) {
-                                        requestSpecialPermissions()
-                                    } else {
-                                        MornShieldNotificationListenerService.setShieldActive(this@MainActivity, true)
-                                        logEvent("notification_shield_toggled", Bundle().apply { putBoolean("active", true) })
-                                    }
+                                    MornShieldNotificationListenerService.setShieldActive(this@MainActivity, true)
+                                    logEvent("notification_shield_toggled", Bundle().apply { putBoolean("active", true) })
                                 }
                             },
                             onAddTask = { text ->

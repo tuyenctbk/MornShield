@@ -75,15 +75,21 @@ class FadeInAlarmService : Service() {
     private fun startAcousticMixer() {
         Log.d("FadeInAlarmService", "MornShield Mixer started with three layers")
         
+        val prefs = getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+        val isPremium = prefs.getBoolean("premium_unlocked", false)
+
         scope.launch(Dispatchers.IO) {
             try {
                 playerLayer1 = MediaPlayer.create(this@FadeInAlarmService, R.raw.ambient_layer).apply { isLooping = true; setVolume(0f, 0f) }
                 playerLayer2 = MediaPlayer.create(this@FadeInAlarmService, R.raw.melodic_layer).apply { isLooping = true; setVolume(0f, 0f) }
-                playerLayer3 = MediaPlayer.create(this@FadeInAlarmService, R.raw.binaural_layer).apply { isLooping = true; setVolume(0f, 0f) }
-
+                
                 playerLayer1?.start()
                 playerLayer2?.start()
-                playerLayer3?.start()
+
+                if (isPremium) {
+                    playerLayer3 = MediaPlayer.create(this@FadeInAlarmService, R.raw.binaural_layer).apply { isLooping = true; setVolume(0f, 0f) }
+                    playerLayer3?.start()
+                }
 
                 // Gradual fade-in over 60 seconds
                 for (i in 1..100) {
@@ -91,10 +97,11 @@ class FadeInAlarmService : Service() {
                     val volume = i / 100f
                     playerLayer1?.setVolume(volume * 0.8f, volume * 0.8f)
                     if (i > 30) playerLayer2?.setVolume((i - 30) / 70f * 0.6f, (i - 30) / 70f * 0.6f)
-                    if (i > 60) playerLayer3?.setVolume((i - 60) / 40f * 0.5f, (i - 60) / 40f * 0.5f)
+                    if (isPremium && i > 60) playerLayer3?.setVolume((i - 60) / 40f * 0.5f, (i - 60) / 40f * 0.5f)
                     delay(600) // 100 steps * 600ms = 60 seconds
                 }
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 Log.e("FadeInAlarmService", "Error in mixer: ${e.message}")
             }
         }
@@ -103,14 +110,25 @@ class FadeInAlarmService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         isAlarmPlaying.value = false
-        try {
-            playerLayer1?.stop(); playerLayer1?.release()
-            playerLayer2?.stop(); playerLayer2?.release()
-            playerLayer3?.stop(); playerLayer3?.release()
-        } catch (e: Exception) {
-            Log.e("FadeInAlarmService", "Error releasing players: ${e.message}")
-        }
+        playerLayer1 = safeReleasePlayer(playerLayer1)
+        playerLayer2 = safeReleasePlayer(playerLayer2)
+        playerLayer3 = safeReleasePlayer(playerLayer3)
         scope.cancel()
+    }
+
+    private fun safeReleasePlayer(player: MediaPlayer?): MediaPlayer? {
+        if (player == null) return null
+        try {
+            player.stop()
+        } catch (e: Exception) {
+            Log.w("FadeInAlarmService", "Error stopping player: ${e.message}")
+        }
+        try {
+            player.release()
+        } catch (e: Exception) {
+            Log.w("FadeInAlarmService", "Error releasing player: ${e.message}")
+        }
+        return null
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

@@ -8,10 +8,14 @@ class MornShieldApp : Application() {
     override fun onCreate() {
         super.onCreate()
         
-        // Initialize AdMob
-        AdsHelper.initialize(this)
-        
-        // Initialize Remote Config
-        RemoteConfigHelper.fetchAndActivate()
+        Thread {
+            try {
+                // Initialize AdMob
+                AdsHelper.initialize(this)
+                
+                // Initialize Remote Config
+                RemoteConfigHelper.fetchAndActivate()
+            } catch (e: Exception) {}
+        }.start()
     }
 }

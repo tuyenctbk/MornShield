@@ -117,8 +117,13 @@ dependencies {
     implementation(libs.play.review)
     implementation(libs.play.review.ktx)
 
+    // Play In-App Updates
+    implementation(libs.play.update)
+    implementation(libs.play.update.ktx)
+
     // Room runtime & Compose icons
     implementation(libs.room.runtime)
+    implementation(libs.billing.ktx)
     implementation("androidx.compose.material:material-icons-extended")
 
     testImplementation(libs.junit)
