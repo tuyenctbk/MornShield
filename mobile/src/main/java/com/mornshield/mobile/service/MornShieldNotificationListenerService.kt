@@ -148,7 +148,7 @@ class MornShieldNotificationListenerService : NotificationListenerService() {
                 if (notificationManager.isNotificationPolicyAccessGranted) {
                     notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
         super.onDestroy()
     }

@@ -130,7 +130,9 @@ class MainActivity : ComponentActivity() {
             ) { perms ->
                 hasPermissions = perms[Manifest.permission.POST_NOTIFICATIONS] == true &&
                                  (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q || perms[Manifest.permission.ACTIVITY_RECOGNITION] == true) &&
-                                 perms[Manifest.permission.READ_CALENDAR] == true
+                                 perms[Manifest.permission.READ_CALENDAR] == true &&
+                                 (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S || 
+                                  (perms[Manifest.permission.BLUETOOTH_SCAN] == true && perms[Manifest.permission.BLUETOOTH_CONNECT] == true))
             }
 
             var isPremium by remember {
@@ -181,9 +183,18 @@ class MainActivity : ComponentActivity() {
                     AppScreen.ONBOARDING -> {
                         OnboardingScreen(
                             onRequestPermissions = { 
-                                val permissions = mutableListOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.READ_CALENDAR)
+                                val permissions = mutableListOf(
+                                    Manifest.permission.POST_NOTIFICATIONS, 
+                                    Manifest.permission.READ_CALENDAR,
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                )
                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                                     permissions.add(Manifest.permission.ACTIVITY_RECOGNITION)
+                                }
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                                    permissions.add(Manifest.permission.BLUETOOTH_SCAN)
+                                    permissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+                                    permissions.add(Manifest.permission.BLUETOOTH_ADVERTISE)
                                 }
                                 requestPermissionLauncher.launch(permissions.toTypedArray())
                             },
