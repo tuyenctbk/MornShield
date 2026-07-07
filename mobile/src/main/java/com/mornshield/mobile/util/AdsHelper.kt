@@ -2,6 +2,7 @@ package com.mornshield.mobile.util
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.graphics.Color as AndroidColor
 import android.view.ViewGroup
 import android.view.Gravity
@@ -83,6 +84,9 @@ object AdsHelper {
         val hasOpenedEnough = openCount >= minOpens
         val isSessionLongEnough = System.currentTimeMillis() - appStartTime > (minSessionSeconds * 1000)
         
+        Log.d("AdsHelper", "canShowAds: count=$openCount, min=$minOpens, age=${System.currentTimeMillis() - firstOpenTime}, minAge=$minDaysMs, session=${System.currentTimeMillis() - appStartTime}, minSession=${minSessionSeconds * 1000}")
+        Log.d("AdsHelper", "Result: isOldEnough=$isOldEnough, hasOpenedEnough=$hasOpenedEnough, isSessionLongEnough=$isSessionLongEnough")
+
         return hasOpenedEnough && isOldEnough && isSessionLongEnough
     }
 

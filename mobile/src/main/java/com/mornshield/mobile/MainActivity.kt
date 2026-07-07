@@ -6,9 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Build
-import android.util.Log
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -23,16 +22,17 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -51,6 +51,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -75,8 +76,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-import androidx.compose.ui.tooling.preview.Preview
-
 enum class AppScreen {
     ONBOARDING,
     DASHBOARD,
@@ -100,7 +99,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        sharedPreferences = getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("mornshield_prefs", MODE_PRIVATE)
         database = MornShieldDatabase.getInstance(this)
         briefingEngine = BriefingEngine(this)
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -345,7 +344,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun isNotificationListenerEnabled(): Boolean {
-        val packageName = packageName
         val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
         return flat?.contains(packageName) == true
     }
@@ -369,6 +367,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         briefingEngine.shutdown()
+        nsdSyncClient.stopDiscovery()
     }
 }
 
@@ -447,7 +446,7 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.6f)),
-                border = BoxBorder()
+                border = boxBorder()
             ) {
                 Row(
                     modifier = Modifier
@@ -502,7 +501,7 @@ fun DashboardScreen(
                 colors = CardDefaults.cardColors(
                     containerColor = if (isShieldActive) Color(0xFF4A1525).copy(alpha = 0.5f) else Color(0xFF16132C).copy(alpha = 0.6f)
                 ),
-                border = BoxBorder()
+                border = boxBorder()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -735,7 +734,7 @@ fun DashboardScreen(
                             // Enhanced markdown rendering: **bold**, *italic*
                             val annotatedTitle = remember(task.title) {
                                 buildAnnotatedString {
-                                    var text = task.title
+                                    val text = task.title
                                     val regex = "(\\d+)|(\\*\\*.*?\\*\\*)|(\\*.*?\\*)|(_.*?_)".toRegex()
                                     var lastIndex = 0
                                     regex.findAll(text).forEach { match ->
@@ -819,7 +818,7 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFFC0B3FF))
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color(0xFFC0B3FF))
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -836,7 +835,7 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.5f)),
-                border = BoxBorder()
+                border = boxBorder()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(stringResource(id = R.string.alarm_settings), color = Color(0xFFC0B3FF), fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -892,7 +891,7 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.5f)),
-                border = BoxBorder()
+                border = boxBorder()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(stringResource(id = R.string.soundscape_mixer), color = Color(0xFFC0B3FF), fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -923,7 +922,7 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.5f)),
-                border = BoxBorder()
+                border = boxBorder()
             ) {
                 Row(
                     modifier = Modifier
@@ -955,7 +954,7 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF15102A).copy(alpha = 0.5f)),
-                border = BoxBorder()
+                border = boxBorder()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(stringResource(id = R.string.app_evaluation), color = Color(0xFFC0B3FF), fontWeight = FontWeight.Bold, fontSize = 14.sp)
@@ -1051,7 +1050,7 @@ fun SettingsScreen(
 }
 
 @Composable
-fun BoxBorder() = BorderStroke(1.dp, Color(0xFFC0B3FF).copy(alpha = 0.15f))
+fun boxBorder() = BorderStroke(1.dp, Color(0xFFC0B3FF).copy(alpha = 0.15f))
 
 @Preview(showBackground = true, backgroundColor = 0xFF0C091A)
 @Composable

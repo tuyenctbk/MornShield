@@ -18,7 +18,7 @@ object RemoteConfigHelper {
             "weather_api_key" to "REPLACE_ME",
             "ads_min_days" to 3L,
             "ads_min_opens" to 10L,
-            "ads_min_session_seconds" to 30L
+            "ads_min_session_seconds" to 15L
         ))
     }
 
