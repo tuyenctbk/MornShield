@@ -1,9 +1,14 @@
 package com.mornshield.wear.presentation
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -15,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.wear.compose.material.*
 import com.mornshield.wear.R
 import com.mornshield.wear.audio.FadeInAlarmService
@@ -48,7 +54,32 @@ class WearMainActivity : ComponentActivity() {
         }
 
         setContent {
-            WearApp()
+            var hasPermissions by remember {
+                mutableStateOf(
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
+                )
+            }
+
+            val permissionLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) { perms ->
+                hasPermissions = perms.values.all { it }
+            }
+
+            LaunchedEffect(Unit) {
+                if (!hasPermissions) {
+                    permissionLauncher.launch(arrayOf(Manifest.permission.BODY_SENSORS, Manifest.permission.ACTIVITY_RECOGNITION))
+                }
+            }
+
+            if (hasPermissions) {
+                WearApp()
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Permissions required", textAlign = TextAlign.Center)
+                }
+            }
         }
     }
 

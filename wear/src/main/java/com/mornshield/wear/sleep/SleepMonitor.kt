@@ -27,6 +27,7 @@ class SleepMonitor(
     
     private var lastHeartRate = 0f
     private var movementSum = 0f
+    private var currentStage: SleepStage? = null
 
     fun start() {
         Log.d("SleepMonitor", "MornShield Sleep Tracking Started")
@@ -58,14 +59,17 @@ class SleepMonitor(
     }
 
     private fun analyzeSleepStage() {
-        // Simple heuristic: REM often involves higher/variable heart rate and very low motion
-        // This is a placeholder for a more complex ML model or Google Sleep API integration
-        if (movementSum > 15f) {
-            onStageChanged(SleepStage.AWAKE)
+        val nextStage = if (movementSum > 15f) {
+            SleepStage.AWAKE
         } else if (lastHeartRate > 70 && movementSum < 10f) {
-            onStageChanged(SleepStage.REM)
+            SleepStage.REM
         } else {
-            onStageChanged(SleepStage.DEEP)
+            SleepStage.DEEP
+        }
+
+        if (nextStage != currentStage) {
+            currentStage = nextStage
+            onStageChanged(nextStage)
         }
     }
 

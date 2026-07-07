@@ -22,24 +22,31 @@ class NsdSyncClient(context: Context) {
     
     private val scope = CoroutineScope(Dispatchers.IO)
 
+    private var isDiscovering = false
+
     fun startDiscovery() {
+        if (isDiscovering) return
         stopDiscovery()
         
         discoveryListener = object : NsdManager.DiscoveryListener {
             override fun onStartDiscoveryFailed(serviceType: String?, errorCode: Int) {
                 Log.e("NsdSyncClient", "Start discovery failed: $errorCode")
+                isDiscovering = false
             }
 
             override fun onStopDiscoveryFailed(serviceType: String?, errorCode: Int) {
                 Log.e("NsdSyncClient", "Stop discovery failed: $errorCode")
+                isDiscovering = false
             }
 
             override fun onDiscoveryStarted(serviceType: String?) {
                 Log.d("NsdSyncClient", "NSD discovery started")
+                isDiscovering = true
             }
 
             override fun onDiscoveryStopped(serviceType: String?) {
                 Log.d("NsdSyncClient", "NSD discovery stopped")
+                isDiscovering = false
             }
 
             override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
@@ -106,6 +113,7 @@ class NsdSyncClient(context: Context) {
         }
         discoveryListener = null
         resolvedServiceInfo = null
+        isDiscovering = false
     }
 
     /**
@@ -122,7 +130,8 @@ class NsdSyncClient(context: Context) {
         scope.launch {
             var socket: Socket? = null
             try {
-                socket = Socket(serviceInfo.host, serviceInfo.port).apply {
+                val host = serviceInfo.host ?: return@launch
+                socket = Socket(host, serviceInfo.port).apply {
                     soTimeout = 3000
                 }
                 

@@ -21,14 +21,21 @@ class GestureDetector(context: Context, private val onShake: () -> Unit) : Senso
         sensorManager.unregisterListener(this)
     }
 
+    private var lastShakeTime = 0L
+
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0]
             val y = event.values[1]
             val z = event.values[2]
             val gForce = sqrt(x * x + y * y + z * z) / SensorManager.GRAVITY_EARTH
+            
             if (gForce > 2.5f) {
-                onShake()
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - lastShakeTime > 2000) { // 2 second cooldown
+                    lastShakeTime = currentTime
+                    onShake()
+                }
             }
         }
     }

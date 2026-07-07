@@ -7,6 +7,8 @@ import android.util.Log
 import com.mornshield.mobile.util.RemoteConfigHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -38,6 +40,8 @@ class BriefingEngine(private val context: Context) : TextToSpeech.OnInitListener
     private var tts: TextToSpeech? = null
     private var isInitialized = false
     private var pendingText: String? = null
+    
+    private val scope = CoroutineScope(Dispatchers.IO + Job())
 
     private val weatherApi = Retrofit.Builder()
         .baseUrl("https://api.openweathermap.org/data/2.5/")
@@ -89,13 +93,14 @@ class BriefingEngine(private val context: Context) : TextToSpeech.OnInitListener
         tts?.shutdown()
         tts = null
         isInitialized = false
+        scope.cancel()
     }
 
     /**
      * Synthesizes and plays the morning briefing audio.
      */
     fun playMorningBrief(city: String, tasks: List<String>) {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             val weatherDesc = try {
                 val apiKey = RemoteConfigHelper.getWeatherApiKey()
                 if (city.isNotEmpty() && apiKey != "REPLACE_ME") {
