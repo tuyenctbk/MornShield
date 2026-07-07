@@ -14,6 +14,7 @@ Automated unit testing verifies components without requiring hardware deployment
 
 ### B. Heuristic & Parser Tests
 * **BriefingTextFormatterTest**: Validates weather and task info parsing to verify TextToSpeech input matches the expected script template.
+* **Room DAO Tests**: Uses Robolectric to verify data integrity and query logic for `TaskDao` and `SleepLogDao` in a local environment.
 
 ### Running Tests
 Execute JVM unit tests by invoking:

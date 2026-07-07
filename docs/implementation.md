@@ -42,8 +42,14 @@ The `:wear` audio engine now implements a 60-second gradual fade-in:
 
 ---
 
-## 7. Zen Monetization & Remote Config
-MornShield uses an intelligent ad-filtering logic to ensure the "Zen" user experience:
-1.  **Thresholds**: Ads are only shown if the app is ≥ 3 days old, has been opened ≥ 10 times, and the current session is ≥ 15 seconds long.
-2.  **Remote Config**: These values are synced from Firebase Remote Config, allowing real-time adjustment of monetization aggressiveness.
-3.  **Local State**: App open counts and install timestamps are stored securely in `SharedPreferences`.
+## 8. Adaptive Layout & Tablet Optimization
+The `:mobile` dashboard implements an adaptive layout using `LocalConfiguration.current.screenWidthDp`:
+*   **Compact**: Single-column vertical stack optimized for one-handed phone use.
+*   **Expanded (≥600dp)**: Dual-column grid. Controls and analytics are anchored on the left, while the ritual checklist is pinned to the right for maximum visibility.
+
+---
+
+## 9. Android TV Burn-in Prevention
+To protect expensive TV panels during long morning "ambient" sessions, the TV dashboard implements a pixel-shifting algorithm:
+*   **Logic**: Every 60 seconds, the entire layout container is slightly offset by a random value between -15dp and +15dp on both X and Y axes.
+*   **Effect**: Prevents static UI elements (like the clock or checklist headers) from being burned into the OLED/LED panel.
