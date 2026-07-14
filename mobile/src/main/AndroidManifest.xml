@@ -56,6 +56,24 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.StoreListingGraphicActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <!-- Force ProxyBillingActivity and ProxyBillingActivityV2 to not be exported to avoid external intent launches that trigger NPE crash -->
+        <activity
+            android:name="com.android.billingclient.api.ProxyBillingActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false" />
+
+        <activity
+            android:name="com.android.billingclient.api.ProxyBillingActivityV2"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false" />
+
         <service
             android:name=".service.MornShieldNotificationListenerService"
             android:label="MornShield System Shield"

@@ -28,3 +28,16 @@ Thumbs.db
 
 # Log files
 *.log
+
+# Built binaries
+*.apk
+*.apks
+*.aab
+
+# Local / generated screenshots and assets
+/screenshots/release/
+/screenshots/auto/
+/screenshots/dashboard_real.png
+/screenshots/feature_graphic_landscape_raw.png
+/screenshots/feature_graphic_rendered.png
+/screenshots/store/

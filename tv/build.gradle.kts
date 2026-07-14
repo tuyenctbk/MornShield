@@ -22,9 +22,9 @@ android {
     defaultConfig {
         applicationId = "com.mornshield.apps"
         minSdk = 24 // Matches :core requirements
-        targetSdk = 34
-        versionCode = 1011
-        versionName = "1.0.0"
+        targetSdk = 35
+        versionCode = 1041
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

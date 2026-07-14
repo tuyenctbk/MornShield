@@ -35,8 +35,9 @@
         </aapt:attr>
     </path>
 
-    <!-- Sun Rays -->
-    <path android:pathData="M54,42v-6 M54,94v-6 M31,68h-6 M77,68h-6 M38,47l-4,-4 M70,89l-4,-4 M38,89l-4,4 M70,47l-4,4"
+    <!-- Sun Rays (Symmetric & Outward Facing) -->
+    <path
+        android:pathData="M54,42v-6 M54,94v6 M31,68h-6 M77,68h6 M38,47l-4,-4 M70,89l4,4 M38,89l-4,4 M70,47l4,-4"
         android:strokeWidth="1.5"
         android:strokeLineCap="round"
         android:strokeColor="#40FFD700"/>
@@ -48,61 +49,65 @@
         android:scaleX="2.0"
         android:scaleY="2.0">
 
-        <!-- Shield Drop Shadow (Simulated) -->
+        <!-- Shield Drop Shadow (Faceted & Symmetric) -->
         <path
             android:fillColor="#40000000"
-            android:pathData="M12.5,2.5L4.5,6.5v6c0,5.55 3.84,10.74 9,12c5.16,-1.26 9,-6.45 9,-12V6.5l-8.5,-4z"/>
+            android:pathData="M 12.5,2.5 L 4.5,6.5 L 4.5,12.5 L 8.5,21.0 L 12.5,24.5 L 16.5,21.0 L 20.5,12.5 L 20.5,6.5 Z"/>
 
-        <!-- Crystalline Shield Body -->
-        <path
-            android:pathData="M12,2L4,6v6c0,5.55 3.84,10.74 9,12c5.16,-1.26 9,-6.45 9,-12V6l-8,-4z">
+        <!-- Facet 1 (Left Top) -->
+        <path android:pathData="M 12,2 L 4,6 L 12,8.5 Z" android:fillColor="#FFC0B3FF"/>
+        <!-- Facet 2 (Right Top) -->
+        <path android:pathData="M 12,2 L 20,6 L 12,8.5 Z" android:fillColor="#FFD5CCFF"/>
+        <!-- Facet 3 (Left Mid Bevel) -->
+        <path android:pathData="M 4,6 L 4,12 L 8,11.5 Z" android:fillColor="#FF6C52EE"/>
+        <!-- Facet 4 (Right Mid Bevel) -->
+        <path android:pathData="M 20,6 L 20,12 L 16,11.5 Z" android:fillColor="#FF4F38DF"/>
+        <!-- Facet 5 (Left Core Upper) -->
+        <path android:pathData="M 12,8.5 L 4,6 L 8,11.5 Z" android:fillColor="#FF9E8BFF"/>
+        <!-- Facet 6 (Right Core Upper) -->
+        <path android:pathData="M 12,8.5 L 20,6 L 16,11.5 Z" android:fillColor="#FF7A60FF"/>
+        <!-- Facet 7 (Left Core Center) -->
+        <path android:pathData="M 12,8.5 L 8,11.5 L 12,13 Z">
             <aapt:attr name="android:fillColor">
-                <gradient
-                    android:startX="12"
-                    android:startY="2"
-                    android:endX="12"
-                    android:endY="24"
-                    android:type="linear">
-                    <item android:offset="0.0" android:color="#FF8A70FF" />
-                    <item android:offset="0.5" android:color="#FF7A60FF" />
-                    <item android:offset="1.0" android:color="#FF4030A0" />
+                <gradient android:startX="8" android:startY="8.5" android:endX="12" android:endY="13" android:type="linear">
+                    <item android:offset="0.0" android:color="#FFFFFFFF"/>
+                    <item android:offset="1.0" android:color="#FFC0B3FF"/>
                 </gradient>
             </aapt:attr>
         </path>
+        <!-- Facet 8 (Right Core Center) -->
+        <path android:pathData="M 12,8.5 L 16,11.5 L 12,13 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:startX="16" android:startY="8.5" android:endX="12" android:endY="13" android:type="linear">
+                    <item android:offset="0.0" android:color="#FFEBE5FF"/>
+                    <item android:offset="1.0" android:color="#FF8F7DFF"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+        <!-- Facet 9 (Left Outer Lower) -->
+        <path android:pathData="M 4,12 L 8,20.5 L 12,13 Z" android:fillColor="#FF4030A0"/>
+        <!-- Facet 10 (Right Outer Lower) -->
+        <path android:pathData="M 20,12 L 16,20.5 L 12,13 Z" android:fillColor="#FF2B1F80"/>
+        <!-- Facet 11 (Left Mid Lower) -->
+        <path android:pathData="M 4,12 L 8,11.5 L 12,13 Z" android:fillColor="#FF5A45D8"/>
+        <!-- Facet 12 (Right Mid Lower) -->
+        <path android:pathData="M 20,12 L 16,11.5 L 12,13 Z" android:fillColor="#FF3D28B3"/>
+        <!-- Facet 13 (Left Bottom Tip) -->
+        <path android:pathData="M 8,20.5 L 12,24 L 12,13 Z" android:fillColor="#FF331E99"/>
+        <!-- Facet 14 (Right Bottom Tip) -->
+        <path android:pathData="M 16,20.5 L 12,24 L 12,13 Z" android:fillColor="#FF1C0D66"/>
 
-        <!-- Glass Highlight Edge -->
+        <!-- Outer Glassy Outline (Faceted & Symmetric) -->
         <path
-            android:pathData="M12,2.5L4.5,6.3v5.7c0,1 0.1,2 0.3,3"
+            android:pathData="M 12,2 L 4,6 L 4,12 L 8,20.5 L 12,24 L 16,20.5 L 20,12 L 20,6 Z"
+            android:strokeColor="#A0FFFFFF"
             android:strokeWidth="0.5"
-            android:strokeColor="#B0FFFFFF"
-            android:strokeLineCap="round"/>
+            android:fillColor="#00000000" />
 
-        <!-- Shield Core -->
+        <!-- Center Star Spark -->
         <path
-            android:pathData="M12,12m-3.5,0a3.5,3.5 0 1,1 7,0a3.5,3.5 0 1,1 -7,0">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:centerX="12"
-                    android:centerY="12"
-                    android:gradientRadius="4"
-                    android:type="radial">
-                    <item android:offset="0.0" android:color="#FFFFFF" />
-                    <item android:offset="1.0" android:color="#60C0B3FF" />
-                </gradient>
-            </aapt:attr>
-        </path>
-
-        <!-- Inner Spark -->
-        <path
-            android:pathData="M12,10.5l0.5,1.5l1.5,0.5l-1.5,0.5l-0.5,1.5l-0.5,-1.5l-1.5,-0.5l1.5,-0.5z"
-            android:fillColor="#FFFFFF"/>
+            android:pathData="M12,12.2 l0.3,0.8 l0.8,0.3 l-0.8,0.3 l-0.3,0.8 l-0.3,-0.8 l-0.8,-0.3 l0.8,-0.3 z"
+            android:fillColor="#FFFFFFFF" />
     </group>
-
-    <!-- Global Gloss -->
-    <path
-        android:pathData="M 35,35 Q 54,20 73,35"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:strokeColor="#30FFFFFF"/>
 
 </vector>

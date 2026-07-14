@@ -5,7 +5,7 @@
     android:viewportWidth="320"
     android:viewportHeight="180">
 
-    <!-- Cinematic Backdrop -->
+    <!-- Backdrop with Sunset/Sunrise Cinematic Gradient -->
     <path
         android:pathData="M0,0h320v180h-320z">
         <aapt:attr name="android:fillColor">
@@ -15,84 +15,254 @@
                 android:endX="160"
                 android:endY="180"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#1A1535" />
-                <item android:offset="1.0" android:color="#05040D" />
+                <item android:offset="0.0" android:color="#0C081A" />
+                <item android:offset="0.6" android:color="#1A0D2E" />
+                <item android:offset="1.0" android:color="#36173D" />
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Morning Glow Bloom -->
+    <!-- Background Sparkles (Flares) -->
+    <!-- Flare 1 (Top Left) -->
     <path
-        android:pathData="M 0,180 m 0,0 a 140,140 0 0,1 140,-140"
-        android:fillAlpha="0.15">
+        android:pathData="M120,21 L121,24 L124,25 L121,26 L120,29 L119,26 L116,25 L119,24 Z"
+        android:fillColor="#80FFFFFF" />
+    <!-- Flare 2 (Top Mid) -->
+    <path
+        android:pathData="M200,17 L200.8,19.2 L203,20 L200.8,20.8 L200,23 L199.2,20.8 L197,20 L199.2,19.2 Z"
+        android:fillColor="#60FFFFFF" />
+    <!-- Flare 3 (Top Right) -->
+    <path
+        android:pathData="M280,27 L280.8,29.2 L283,30 L280.8,30.8 L280,33 L279.2,30.8 L277,30 L279.2,29.2 Z"
+        android:fillColor="#80FFFFFF" />
+    <!-- Flare 4 (Mid Right) -->
+    <path
+        android:pathData="M300,66 L301,69 L304,70 L301,71 L300,74 L299,71 L296,70 L299,69 Z"
+        android:fillColor="#FFFFD700" />
+    <!-- Flare 5 (Bottom Right) -->
+    <path
+        android:pathData="M260,137 L260.8,139.2 L263,140 L260.8,140.8 L260,143 L259.2,140.8 L257,140 L259.2,139.2 Z"
+        android:fillColor="#40FFFFFF" />
+    <!-- Flare 6 (Behind Text) -->
+    <path
+        android:pathData="M160,43 L160.5,44.5 L162,45 L160.5,45.5 L160,47 L159.5,45.5 L158,45 L159.5,44.5 Z"
+        android:fillColor="#40C0B3FF" />
+
+    <!-- Rising Sun Bloom behind the hills & shield -->
+    <path
+        android:pathData="M 45,125 m -60,0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:centerX="0"
-                android:centerY="180"
-                android:gradientRadius="140"
+                android:centerX="45"
+                android:centerY="125"
+                android:gradientRadius="60"
                 android:type="radial">
-                <item android:offset="0.0" android:color="#FFFFD700" />
+                <item android:offset="0.0" android:color="#40FF8C00" />
+                <item android:offset="1.0" android:color="#00FF8C00" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M 45,125 m -30,0 a 30,30 0 1,1 60,0 a 30,30 0 1,1 -60,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="45"
+                android:centerY="125"
+                android:gradientRadius="30"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#FFFFEE" />
+                <item android:offset="0.2" android:color="#FFF3A1" />
+                <item android:offset="0.6" android:color="#FF8C00" />
                 <item android:offset="1.0" android:color="#00FF8C00" />
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Content Group -->
+    <!-- Sun Rays -->
+    <path
+        android:pathData="M 45,85 v-15 M 45,165 v15 M 5,125 h-15 M 85,125 h15 M 17,97 l-11,-11 M 73,153 l11,11 M 17,153 l-11,11 M 73,97 l11,-11"
+        android:strokeColor="#25FFB33B"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round" />
+
+    <!-- Layered Zen Hills/Waves -->
+    <!-- Hill 1 (Back) -->
+    <path
+        android:pathData="M -10,180 Q 80,120 180,160 T 330,140 L 330,180 L -10,180 Z"
+        android:fillAlpha="0.85">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="120"
+                android:endX="320"
+                android:endY="180"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#180F33" />
+                <item android:offset="1.0" android:color="#0A061F" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Hill 2 (Middle) -->
+    <path
+        android:pathData="M -10,180 Q 100,140 220,150 T 330,165 L 330,180 L -10,180 Z"
+        android:fillAlpha="0.9">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="140"
+                android:endX="320"
+                android:endY="180"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#240D36" />
+                <item android:offset="1.0" android:color="#0F041C" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Hill 3 (Front) -->
+    <path
+        android:pathData="M -10,180 Q 60,165 140,160 T 330,175 L 330,180 L -10,180 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="160"
+                android:endX="320"
+                android:endY="180"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#100826" />
+                <item android:offset="1.0" android:color="#050312" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Crystalline 3D Shield (Left Side) -->
     <group
-        android:translateX="30"
-        android:translateY="65">
+        android:translateX="35"
+        android:translateY="40"
+        android:scaleX="3.2"
+        android:scaleY="3.2">
 
-        <!-- Shield Icon with Metallic and Golden Gradients -->
-        <group
-            android:scaleX="2.8"
-            android:scaleY="2.8">
-            <path
-                android:pathData="M12,1L3,5v6c0,5.55 3.84,10.74 9,12 5.16,-1.26 9,-6.45 9,-12V5l-9,-4z">
-                <aapt:attr name="android:fillColor">
-                    <gradient
-                        android:startX="3"
-                        android:startY="1"
-                        android:endX="21"
-                        android:endY="23"
-                        android:type="linear">
-                        <item android:offset="0.0" android:color="#C0B3FF" />
-                        <item android:offset="0.5" android:color="#7A60FF" />
-                        <item android:offset="1.0" android:color="#4F38DF" />
-                    </gradient>
-                </aapt:attr>
-            </path>
-            
-            <path
-                android:fillColor="#15102A"
-                android:pathData="M12,2.5L4.5,6v5c0,4.8 3.2,9.3 7.5,10.5 4.3,-1.2 7.5,-5.7 7.5,-10.5V6l-7.5,-3.5z"/>
+        <!-- Facet 1 (Left Top) -->
+        <path android:pathData="M 12,2 L 4,6 L 12,8.5 Z" android:fillColor="#FFC0B3FF"/>
+        <!-- Facet 2 (Right Top) -->
+        <path android:pathData="M 12,2 L 20,6 L 12,8.5 Z" android:fillColor="#FFD5CCFF"/>
+        <!-- Facet 3 (Left Mid Bevel) -->
+        <path android:pathData="M 4,6 L 4,12 L 8,11.5 Z" android:fillColor="#FF6C52EE"/>
+        <!-- Facet 4 (Right Mid Bevel) -->
+        <path android:pathData="M 20,6 L 20,12 L 16,11.5 Z" android:fillColor="#FF4F38DF"/>
+        <!-- Facet 5 (Left Core Upper) -->
+        <path android:pathData="M 12,8.5 L 4,6 L 8,11.5 Z" android:fillColor="#FF9E8BFF"/>
+        <!-- Facet 6 (Right Core Upper) -->
+        <path android:pathData="M 12,8.5 L 20,6 L 16,11.5 Z" android:fillColor="#FF7A60FF"/>
+        <!-- Facet 7 (Left Core Center) -->
+        <path android:pathData="M 12,8.5 L 8,11.5 L 12,13 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:startX="8" android:startY="8.5" android:endX="12" android:endY="13" android:type="linear">
+                    <item android:offset="0.0" android:color="#FFFFFFFF"/>
+                    <item android:offset="1.0" android:color="#FFC0B3FF"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+        <!-- Facet 8 (Right Core Center) -->
+        <path android:pathData="M 12,8.5 L 16,11.5 L 12,13 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:startX="16" android:startY="8.5" android:endX="12" android:endY="13" android:type="linear">
+                    <item android:offset="0.0" android:color="#FFEBE5FF"/>
+                    <item android:offset="1.0" android:color="#FF8F7DFF"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+        <!-- Facet 9 (Left Outer Lower) -->
+        <path android:pathData="M 4,12 L 8,20.5 L 12,13 Z" android:fillColor="#FF4030A0"/>
+        <!-- Facet 10 (Right Outer Lower) -->
+        <path android:pathData="M 20,12 L 16,20.5 L 12,13 Z" android:fillColor="#FF2B1F80"/>
+        <!-- Facet 11 (Left Mid Lower) -->
+        <path android:pathData="M 4,12 L 8,11.5 L 12,13 Z" android:fillColor="#FF5A45D8"/>
+        <!-- Facet 12 (Right Mid Lower) -->
+        <path android:pathData="M 20,12 L 16,11.5 L 12,13 Z" android:fillColor="#FF3D28B3"/>
+        <!-- Facet 13 (Left Bottom Tip) -->
+        <path android:pathData="M 8,20.5 L 12,24 L 12,13 Z" android:fillColor="#FF331E99"/>
+        <!-- Facet 14 (Right Bottom Tip) -->
+        <path android:pathData="M 16,20.5 L 12,24 L 12,13 Z" android:fillColor="#FF1C0D66"/>
 
-            <path
-                android:pathData="M12,15c-1.66,0 -3,-1.34 -3,-3s1.34,-3 3,-3s3,1.34 3,3S13.66,15 12,15z M12,7V5 M12,19v-2 M5,12H3 M21,12h-2 M18.36,5.64l-1.41,1.41 M7.05,16.95l-1.41,1.41 M18.36,18.36l-1.41,-1.41 M7.05,7.05L5.64,5.64">
-                <aapt:attr name="android:fillColor">
-                    <gradient
-                        android:startX="8"
-                        android:startY="5"
-                        android:endX="16"
-                        android:endY="19"
-                        android:type="linear">
-                        <item android:offset="0.0" android:color="#FFF3A1" />
-                        <item android:offset="0.6" android:color="#FFB33B" />
-                        <item android:offset="1.0" android:color="#FF7F11" />
-                    </gradient>
-                </aapt:attr>
-            </path>
-        </group>
+        <!-- Outer Glassy Outline (Faceted & Symmetric) -->
+        <path
+            android:pathData="M 12,2 L 4,6 L 4,12 L 8,20.5 L 12,24 L 16,20.5 L 20,12 L 20,6 Z"
+            android:strokeColor="#A0FFFFFF"
+            android:strokeWidth="0.5"
+            android:fillColor="#00000000" />
 
-        <!-- MornShield Branding (Minimalist Accent) -->
-        <group android:translateX="85" android:translateY="20">
-            <path
-                android:fillColor="#FFFFFF"
-                android:pathData="M0,0h80v2h-80z"
-                android:fillAlpha="0.5"/>
-        </group>
+        <!-- Center Star Spark -->
+        <path
+            android:pathData="M 12,12.2 l 0.3,0.8 l 0.8,0.3 l -0.8,0.3 l -0.3,0.8 l -0.3,-0.8 l -0.8,-0.3 l 0.8,-0.3 z"
+            android:fillColor="#FFFFFFFF" />
     </group>
 
-    <!-- Background Sparkles -->
-    <path android:pathData="M280,30h1v1h-1z M300,70h1v1h-1z M260,140h1v1h-1z" android:fillColor="#40FFFFFF"/>
+    <!-- Branding Text "MornShield" (Right Side) -->
+    <!-- Glow Layer -->
+    <group
+        android:translateX="138"
+        android:translateY="75">
+        <path
+            android:pathData="M 0,12 v -12 l 4.5,6 l 4.5,-6 v 12 M 18,0 a 4 4 0 0 1 4 4 v 4 a 4 4 0 0 1 -4 4 h -1 a 4 4 0 0 1 -4 -4 v -4 a 4 4 0 0 1 4 -4 h 1 M 26,12 v -12 h 5 a 3.5 3.5 0 0 1 3.5 3.5 v 1 a 3.5 3.5 0 0 1 -3.5 3.5 h -5 M 29.5,8 l 5,4 M 38.5,12 v -12 l 7.5,12 v -12 M 56,1 h -3 a 2.5 2.5 0 0 0 -2.5 2.5 v 0.5 a 2.5 2.5 0 0 0 2.5 2.5 h 1 a 2.5 2.5 0 0 1 2.5 2.5 v 0.5 a 2.5 2.5 0 0 1 -2.5 2.5 h -3 M 60,12 v -12 M 67.5,12 v -12 M 60,6 h 7.5 M 71.5 12 v -12 M 81.5,0 h -6 v 12 h 6 M 75.5,6 h 5 M 85.5,0 v 12 h 6 M 95.5,12 v -12 h 4 c 3.5 0 5.5 2.5 5.5 6 c 0 3.5 -2 6 -5.5 6 z"
+            android:strokeColor="#307A60FF"
+            android:strokeWidth="4.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000" />
+    </group>
+
+    <!-- Core Text Layer -->
+    <group
+        android:translateX="138"
+        android:translateY="75">
+        <path
+            android:pathData="M 0,12 v -12 l 4.5,6 l 4.5,-6 v 12 M 18,0 a 4 4 0 0 1 4 4 v 4 a 4 4 0 0 1 -4 4 h -1 a 4 4 0 0 1 -4 -4 v -4 a 4 4 0 0 1 4 -4 h 1 M 26,12 v -12 h 5 a 3.5 3.5 0 0 1 3.5 3.5 v 1 a 3.5 3.5 0 0 1 -3.5 3.5 h -5 M 29.5,8 l 5,4 M 38.5,12 v -12 l 7.5,12 v -12 M 56,1 h -3 a 2.5 2.5 0 0 0 -2.5 2.5 v 0.5 a 2.5 2.5 0 0 0 2.5 2.5 h 1 a 2.5 2.5 0 0 1 2.5 2.5 v 0.5 a 2.5 2.5 0 0 1 -2.5 2.5 h -3 M 60,12 v -12 M 67.5,12 v -12 M 60,6 h 7.5 M 71.5 12 v -12 M 81.5,0 h -6 v 12 h 6 M 75.5,6 h 5 M 85.5,0 v 12 h 6 M 95.5,12 v -12 h 4 c 3.5 0 5.5 2.5 5.5 6 c 0 3.5 -2 6 -5.5 6 z"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeWidth="1.8"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000" />
+    </group>
+
+    <!-- Accent Golden Line below the text -->
+    <!-- Accent Line Glow -->
+    <path
+        android:pathData="M 138,96 h 108"
+        android:strokeColor="#30FFB33B"
+        android:strokeWidth="3.0"
+        android:strokeLineCap="round" />
+    <!-- Accent Line Core -->
+    <path
+        android:pathData="M 138,96 h 108"
+        android:strokeColor="#FFFFD700"
+        android:strokeWidth="1.0"
+        android:strokeLineCap="round" />
+
+    <!-- Subtitle Tagline "Z E N" -->
+    <!-- Subtitle Glow -->
+    <group
+        android:translateX="178"
+        android:translateY="103">
+        <path
+            android:pathData="M 0,0 h 6 l -6,6 h 6 M 15,0 h -5 v 6 h 5 M 10,3 h 4 M 19,6 v -6 l 5,6 v -6"
+            android:strokeColor="#30C0B3FF"
+            android:strokeWidth="2.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000" />
+    </group>
+    <!-- Subtitle Core -->
+    <group
+        android:translateX="178"
+        android:translateY="103">
+        <path
+            android:pathData="M 0,0 h 6 l -6,6 h 6 M 15,0 h -5 v 6 h 5 M 10,3 h 4 M 19,6 v -6 l 5,6 v -6"
+            android:strokeColor="#FFC0B3FF"
+            android:strokeWidth="1.0"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000" />
+    </group>
 
 </vector>
+

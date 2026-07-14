@@ -22,9 +22,9 @@ android {
     defaultConfig {
         applicationId = "com.mornshield.apps"
         minSdk = 30 // Wear OS 3.0+
-        targetSdk = 34
-        versionCode = 1013
-        versionName = "1.0.0"
+        targetSdk = 35
+        versionCode = 1043
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
