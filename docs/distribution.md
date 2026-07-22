@@ -19,6 +19,6 @@ This document hosts the official store description and release notes for **MornS
   3. Systemic Shield: Activates system DND and suppresses distracting app notifications in-memory.
   4. Mindful Unlocking: A quick Wordle puzzle to wake your brain before accessing the digital world.
   5. AI Morning Brief: Real-time weather, meetings, and task summaries spoken naturally.
-  6. Health Integration: Syncs rituals with Android Health Connect for deep sleep analytics.
+  6. Health Integration: Local sleep analytics stored privately on your device.
   7. Zen Monetization: Intelligent ad-delay logic (min 3 days, 10 opens, and session delay) to respect your morning peace.
   ```
