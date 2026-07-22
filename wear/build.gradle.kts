@@ -23,8 +23,8 @@ android {
         applicationId = "com.mornshield.apps"
         minSdk = 30 // Wear OS 3.0+
         targetSdk = 35
-        versionCode = 1043
-        versionName = "1.1.0"
+        versionCode = 1053
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
