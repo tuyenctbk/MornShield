@@ -159,6 +159,7 @@ class MainActivity : ComponentActivity() {
 
             // Observe Tasks & Logs
             LaunchedEffect(Unit) {
+                com.mornshield.mobile.util.UpdateHelper.checkForUpdates(this@MainActivity, isShieldActive)
                 launch {
                     taskDao.getTasksForDate(todayDate).collectLatest {
                         todayTasks = it
@@ -331,7 +332,7 @@ class MainActivity : ComponentActivity() {
                                 briefingEngine.playMorningBrief("", taskTitles)
 
                                 // Trigger Play Store rating dialog if conditions are met
-                                RatingHelper.triggerReviewFlow(this@MainActivity)
+                                RatingHelper.triggerReviewFlow(this@MainActivity, isShieldActive)
                                 
                                 // Show interstitial ad upon ritual completion
                                 AdsHelper.showInterstitial(this@MainActivity, isPremium)
@@ -367,7 +368,7 @@ class MainActivity : ComponentActivity() {
                                 logEvent("premium_toggled", Bundle().apply { putBoolean("premium", isPremium) })
                             },
                             onTriggerReview = {
-                                RatingHelper.triggerReviewFlow(this@MainActivity, force = true)
+                                RatingHelper.triggerReviewFlow(this@MainActivity, isShieldActive = false, force = true)
                             },
                             onBack = { currentScreen = AppScreen.DASHBOARD }
                         )

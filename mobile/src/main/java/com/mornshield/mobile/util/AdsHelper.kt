@@ -74,6 +74,12 @@ object AdsHelper {
     fun canShowAds(context: Context, isPremium: Boolean): Boolean {
         if (isPremium) return false
         
+        // Never show ads if the distraction-free Morning Shield is active!
+        if (com.mornshield.mobile.service.MornShieldNotificationListenerService.isShieldActive.value) {
+            Log.d("AdsHelper", "Shield is active. Suppressing ads to preserve morning focus.")
+            return false
+        }
+        
         val prefs = context.getSharedPreferences("mornshield_prefs", Context.MODE_PRIVATE)
         val openCount = prefs.getInt("app_open_count", 0)
         val firstOpenTime = prefs.getLong("first_open_time", System.currentTimeMillis())
